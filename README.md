@@ -1,2 +1,2 @@
 # DS-Learning-Log
-2026/04/20 学習開始。最低ラインを死守する
+April 20,2026:Start of studies
