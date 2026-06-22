@@ -15,15 +15,37 @@ purchase_actions = [
 ]
 
 class Customer:
+    """
+    Represents a customer and tracks their purchase history.
+    
+    Attributes:
+        customer_id (str): The unique identifier for the customer.
+        name (str): The customer's name.
+        total_amount (int): The cumulative purchase amount.
+    """
+
+
     def __init__(self, customer_id, name):
+        """
+        Save customer_id and name. Then initialize total_amount to 0.
+
+        Args:
+            customer_id (str): The unique identifier for the customer.
+            name (str): The customer's name.
+        """
+        self.customer_id = customer_id
+        self.name = name
+        self.total_amount = 0
+
+
+
+    def add_purchase(self, amount):
         pass
 
-    def add_purchas(self, amount):
-        pass
 
     def get_rank(self):
         pass
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     customers = {}
