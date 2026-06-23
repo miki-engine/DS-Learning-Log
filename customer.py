@@ -40,11 +40,29 @@ class Customer:
 
 
     def add_purchase(self, amount):
-        pass
+        """
+        Add amount to total_amount.
+
+        Args:
+            amount (int): The purchase amount.
+        """
+        self.total_amount += amount
 
 
     def get_rank(self):
-        pass
+        """
+        Rank determined based on total_amount.
+
+        Returns:
+            rank (str): If the total_amount is 10000 or more, return VIP.
+            Otherwise return Standard.
+        """
+        if self.total_amount >= 10000:
+            rank = "VIP"
+        else:
+            rank = "Standard"
+
+        return rank
 
 
 if __name__ == "__main__":
