@@ -67,3 +67,21 @@ class Customer:
 
 if __name__ == "__main__":
     customers = {}
+    for customer in customer_master:
+        cid = customer["customer_id"]
+        name = customer["name"]
+        new_customer = Customer(cid, name)
+        customers[cid] = new_customer
+
+    for action in purchase_actions:
+        cid = action["customer_id"]
+        amount = action["amount"]
+        target_customer = customers[cid]
+        target_customer.add_purchase(amount)
+
+    for cid in customers:
+        target_customer = customers[cid]
+        customer_id = target_customer.customer_id
+        name = target_customer.name
+        total_amount = target_customer.total_amount
+        rank = target_customer.get_rank()
