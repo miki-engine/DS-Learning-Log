@@ -79,9 +79,13 @@ if __name__ == "__main__":
         target_customer = customers[cid]
         target_customer.add_purchase(amount)
 
-    for cid in customers:
-        target_customer = customers[cid]
+    print("ID   |   Name   | Total amount | Rank")
+
+    for cid, target_customer in customers.items():
         customer_id = target_customer.customer_id
         name = target_customer.name
         total_amount = target_customer.total_amount
         rank = target_customer.get_rank()
+
+        print(f"{cid} | {name:8} | {total_amount:12} | {rank}")
+
