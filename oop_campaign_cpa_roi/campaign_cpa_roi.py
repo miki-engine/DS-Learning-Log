@@ -23,20 +23,43 @@ conversion_logs = [
 
 class Campaign:
     """
-    
+    Represents a campaign and tracks its history.
+
+    Attributes:
+        campaign_id (str): The unique identifier for the campaign.
+        name (str): The campaign's name.
+        cost (int): The cost of the campaign.
+        conversions (int): The number of conversions acquired through the campaign.
+        revenue (int) : The total sales generated through the campaign.
     """
 
 
     def __init__(self, campaign_id, name, cost):
         """
+        Save campaign_id, name, and cost. Then initialize conversions and revenue to 0.
+
+        Args:
+            campaign_id (str): The unique identifier for the campaign.
+            name (str): The campaign's name.
+            cost (int): The cost of the campaign.
         """
-        pass
+        self.campaign_id = campaign_id
+        self.name = name
+        self.cost = cost
+        self.conversions = 0
+        self.revenue = 0
 
 
     def add_conversion(self, amount):
         """
+        Add amount to revenue and 1 to conversions.
+
+        Args:
+            amount (int): The sales generated through the campaign.
         """
-        pass
+        if amount > 0:
+            self.conversions += 1
+            self.revenue += amount
 
 
     def calculate_cpa(self):
