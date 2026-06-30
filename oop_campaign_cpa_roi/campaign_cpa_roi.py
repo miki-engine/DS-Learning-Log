@@ -64,13 +64,32 @@ class Campaign:
 
     def calculate_cpa(self):
         """
+        Calculate the cost per acquisition (CPA) to acquire one purchase.
+
+        Returns:
+            float: The cost per acquisition (CPA), or 0 if there are no conversions.
         """
-        pass
+        if self.conversions <= 0:
+            cpa = 0
+        else:
+            cpa = self.cost / self.conversions
+        
+        return cpa
+        
+
 
     def calculate_roi(self):
         """
+        Calculate the percentage of profit (ROI) generated relative to the costs incurred.
+
+        Returns:
+            float: The percentage of profit (ROI).
         """
-        pass
+        if self.cost <= 0:
+            roi = 0
+        else:
+            roi = (self.revenue - self.cost) / self.cost * 100
+        return roi
 
 
 if __name__ == "__main__":
