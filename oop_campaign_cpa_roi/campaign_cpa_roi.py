@@ -23,7 +23,7 @@ conversion_logs = [
 
 class Campaign:
     """
-    Represents a campaign and tracks its history.
+    Represents a campaign and tracks its total performance.
 
     Attributes:
         campaign_id (str): The unique identifier for the campaign.
@@ -94,3 +94,16 @@ class Campaign:
 
 if __name__ == "__main__":
     campaigns = {}
+
+    for row in campaign_master:
+        cid = row["campaign_id"]
+        name = row["name"]
+        cost = row["cost"]
+        new_campaign = Campaign(cid, name, cost)
+        campaigns[cid] = new_campaign
+
+    for log in conversion_logs:
+        cid = log["campaign_id"]
+        amount = log["amount"]
+        target_campaign = campaigns[cid]
+        target_campaign.add_conversion(amount)
