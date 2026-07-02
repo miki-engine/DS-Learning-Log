@@ -90,6 +90,25 @@ class Campaign:
         else:
             roi = (self.revenue - self.cost) / self.cost * 100
         return roi
+    
+
+    def summary(self):
+        """
+        Summarize the result so far.
+
+        Returns:
+            dict: A dictionary contains campaign_id, name, cost, conversions, revenue, cpa,
+            and roi.
+        """
+        return {
+            "campaign_id": self.campaign_id,
+            "name": self.name,
+            "cost": self.cost,
+            "conversions": self.conversions,
+            "revenue": self.revenue,
+            "cpa": self.calculate_cpa(),
+            "roi": self.calculate_roi()
+        }
 
 
 if __name__ == "__main__":
@@ -107,3 +126,15 @@ if __name__ == "__main__":
         amount = log["amount"]
         target_campaign = campaigns[cid]
         target_campaign.add_conversion(amount)
+
+    print(f"{'ID':6} | {'name':16} | {'cost':>7} | {'revenue':>7} | {'conversions':>11} | {'CPA':>8} | ROI")
+    for cid, campaign in campaigns.items():
+        s = campaign.summary()
+        i = s["campaign_id"]
+        n = s["name"]
+        cos = s["cost"]
+        rev = s["revenue"]
+        con = s["conversions"]
+        cpa = s["cpa"]
+        roi = s["roi"]
+        print(f"{i} | {n:16} | {cos:7} | {rev:7} | {con:11} | {cpa:8.0f} | {roi:.1f}%")
