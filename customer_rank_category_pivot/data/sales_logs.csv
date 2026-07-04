@@ -1,0 +1,10 @@
+customer_id,rank,category,amount
+C001,Gold,pparel,12000
+C002, Silver, Electronics,25000
+C003,Bronze,Apparel,3000
+C001,Gold,Groceries,5000
+C004,Gold,Electronics,40000
+C005,Silver,Apparel,8000
+C006,Bronze,Groceries,2000
+C002,Silver,Groceries,4500
+C007,Gold,Apparel,15000
