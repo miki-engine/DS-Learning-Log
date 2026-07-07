@@ -10,15 +10,15 @@ This script creates campaign objects from master data, adds the sales amounts fr
 - Updating object attributes with methods
 - Calculating CPA and ROI
 - Ignoring invalid conversion data
-- Using 'if __name__ == "__main__"'
-- Writing a '.py' script instead of a Jupyter Notebook
+- Using `if __name__ == "__main__"`
+- Writing a `.py` script instead of a Jupyter Notebook
 
 ## What I learned
 I learned that a dictionary is useful for managing objects by ID.
 
-In this script, I used 'campaign_id' as the dictionary key, so I could easily find the correct campaign object when processing each conversion log.
+In this script, I used `campaign_id` as the dictionary key, so I could easily find the correct campaign object when processing each conversion log.
 
-I also learned how to add calculation methods to a class. By defining 'calculate_cpa()' and 'calculate_roi()' inside the 'Campaign' class, each campaign object can calculate its own performance.
+I also learned how to add calculation methods to a class. By defining `calculate_cpa()` and `calculate_roi()` inside the `Campaign` class, each campaign object can calculate its own performance.
 
 ## Future improvements
 - Handle conversion logs with unknown campaign IDs
