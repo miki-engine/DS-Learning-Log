@@ -1,0 +1,9 @@
+purchase_id,user_id,amount,category
+P01,U001,5000,Apparel
+P02,U002,2000,Electronics
+P03,U001,8000,Electronics
+P04,U003,15000,Apparel
+P05,U005,3000,Groceries
+P06,U002,1500,Groceries
+P07,U004,12000,Electronics
+P08,U003,4000,Apparel
