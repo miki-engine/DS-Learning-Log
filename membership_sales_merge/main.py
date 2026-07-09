@@ -27,9 +27,22 @@ def merge_data(users_df: pd.DataFrame, purchases_df: pd.DataFrame) -> pd.DataFra
 
 
 def analyze_sales_by_membership(merged_df: pd.DataFrame) -> pd.Series:
-    """
+    """Aggregate total purchase amount by membership rank.
+
+    Args:
+        merged_df Merged DataFrame containing "membership" and "amount" columns.
+
+    Returns:
+        Series indexed by membership rank with summed amounts.
     """
     pass
 
 
 if __name__ == "__main__":
+    data_dir = Path(__file__).parent / "data"
+
+    users_df, purchase_df = load_data(data_dir)
+    merged_df = merge_data(users_df, purchase_df)
+    result = analyze_sales_by_membership(merged_df)
+
+    print(result)
