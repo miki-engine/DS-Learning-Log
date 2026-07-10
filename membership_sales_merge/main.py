@@ -11,7 +11,13 @@ def load_data(data_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     Returns:
         A tuple of (users_df, purchases_df)
     """
-    pass
+    users_path = data_dir / "users.csv"
+    purchases_path = data_dir / "purchases.csv"
+
+    users_df = pd.read_csv(users_path)
+    purchases_df = pd.read_csv(purchases_path)
+
+    return (users_df, purchases_df)
 
 
 def merge_data(users_df: pd.DataFrame, purchases_df: pd.DataFrame) -> pd.DataFrame:
