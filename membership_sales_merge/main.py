@@ -28,8 +28,11 @@ def merge_data(users_df: pd.DataFrame, purchases_df: pd.DataFrame) -> pd.DataFra
         purchases_df: Purchase log data (purchase_id, user_id, amount, category).
         
     Returns:
-        Merged DataFrame containing purchase recourds with membership info.
-    """pass
+        Merged DataFrame containing purchase records with membership info.
+    """
+    df_merged = pd.merge(users_df, purchases_df, on="user_id", how="inner")
+
+    return df_merged
 
 
 def analyze_sales_by_membership(merged_df: pd.DataFrame) -> pd.Series:
