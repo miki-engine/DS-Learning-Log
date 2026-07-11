@@ -39,12 +39,14 @@ def analyze_sales_by_membership(merged_df: pd.DataFrame) -> pd.Series:
     """Aggregate total purchase amount by membership rank.
 
     Args:
-        merged_df Merged DataFrame containing "membership" and "amount" columns.
+        merged_df: Merged DataFrame containing "membership" and "amount" columns.
 
     Returns:
         Series indexed by membership rank with summed amounts.
     """
-    pass
+    result_member = merged_df.groupby("membership")["amount"].sum()
+
+    return result_member
 
 
 if __name__ == "__main__":
