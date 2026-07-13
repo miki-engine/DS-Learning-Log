@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import pandas as pd
 
 
@@ -17,7 +18,7 @@ def load_data(data_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     users_df = pd.read_csv(users_path)
     purchases_df = pd.read_csv(purchases_path)
 
-    return (users_df, purchases_df)
+    return users_df, purchases_df
 
 
 def merge_data(users_df: pd.DataFrame, purchases_df: pd.DataFrame) -> pd.DataFrame:
@@ -35,25 +36,29 @@ def merge_data(users_df: pd.DataFrame, purchases_df: pd.DataFrame) -> pd.DataFra
     return df_merged
 
 
-def analyze_sales_by_membership(merged_df: pd.DataFrame) -> pd.Series:
+def analyze_sales_by_membership(merged_df: pd.DataFrame) -> pd.DataFrame:
     """Aggregate total purchase amount by membership rank.
 
     Args:
         merged_df: Merged DataFrame containing "membership" and "amount" columns.
 
     Returns:
-        Series indexed by membership rank with summed amounts.
+        DataFrame containing total amount by membership type.
     """
-    result_member = merged_df.groupby("membership")["amount"].sum()
+    result_member = (
+        merged_df
+        .groupby("membership", as_index=False)["amount"]
+        .sum()
+    )
 
     return result_member
 
 
 if __name__ == "__main__":
-    data_dir = Path(__file__).parent / "data"
+    data_dir = Path(__file__).resolve().parent / "data"
 
-    users_df, purchase_df = load_data(data_dir)
-    merged_df = merge_data(users_df, purchase_df)
+    users_df, purchases_df = load_data(data_dir)
+    merged_df = merge_data(users_df, purchases_df)
     result = analyze_sales_by_membership(merged_df)
 
     print(result)
