@@ -5,10 +5,20 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def load_data(csv_path: Path) -> pd.DataFrame:
+def load_data(data_dir: Path) -> pd.DataFrame:
+    """Load sales logs CSV file into DataFrame.
+
+    Args:
+        data_dir: Path to the directory containing the CSV file.
+
+    Returns:
+        DataFrame containing sales logs data (date, category, amount)
     """
-    """
-    pass
+    csv_path = data_dir / "sales_logs.csv"
+    df = pd.read_csv(csv_path, parse_dates=["date"])
+
+    return df
+
 
 def aggregate_sales(df: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
     """
@@ -26,3 +36,10 @@ def save_png(fig: plt.Figure, output_path: Path) -> None:
     """
     """
     pass
+
+
+if __name__ == "__main__":
+    base_dir = Path(__file__).resolve().parent
+    data_dir = base_dir / "data"
+
+    output_path = base_dir / "output" / "sales_visualization.png"
