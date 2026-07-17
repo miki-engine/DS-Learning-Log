@@ -21,9 +21,18 @@ def load_data(data_dir: Path) -> pd.DataFrame:
 
 
 def aggregate_sales(df: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
+    """Aggregate daily total sales and total sales by category.
+
+    Args:
+        df: DataFrame containing sales logs data (date, category, amount)
+
+    Returns:
+        Tuple of total daily sales and total sales by category.
     """
-    """
-    pass
+    daily_sales = df.groupby("date")["amount"].sum()
+    category_sales = df.groupby("category")["amount"].sum()
+
+    return daily_sales, category_sales
 
 
 def visualize(daily_sales: pd.Series, category_sales: pd.Series) -> plt.Figure:
