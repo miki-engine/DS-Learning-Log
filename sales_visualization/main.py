@@ -20,26 +20,81 @@ def load_data(data_dir: Path) -> pd.DataFrame:
     return df
 
 
-def aggregate_sales(df: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
-    """Aggregate daily total sales and total sales by category.
+def aggregate_sales(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Aggregate daily sales and total sales by category.
 
     Args:
-        df: DataFrame containing sales logs data (date, category, amount)
+        df: DataFrame containing sales log data
+            (date, category, amount)
 
     Returns:
-        Tuple of total daily sales and total sales by category.
+        Tuple containing daily sales and sales by category.
     """
-    daily_sales = df.groupby("date")["amount"].sum()
-    category_sales = df.groupby("category")["amount"].sum()
+    daily_sales = (
+        df.groupby("date", as_index=False)["amount"]
+        .sum()
+        .sort_values("date")
+    )
+
+    category_sales = (
+        df.groupby("category", as_index=False)["amount"]
+        .sum()
+    )
 
     return daily_sales, category_sales
 
 
-def visualize(daily_sales: pd.Series, category_sales: pd.Series) -> plt.Figure:
-    """
-    """
-    pass
+def visualize(
+        daily_sales: pd.DataFrame,
+        category_sales: pd.DataFrame,
+        ) -> plt.Figure:
+    """Create a figure containing two sales charts.
 
+    The top chart shows the daily sales trend, and the bottom chart
+    shows total sales by category.
+
+    Args:
+        daily_sales: DataFrame containing daily sales
+            (date, amount).
+        category_sales: DataFrame containing sales by category
+            (category, amount).
+
+    Returns:
+        Figure containing a line chart and a bar chart.
+    """
+    fig, axes = plt.subplots(
+        nrows=2,
+        ncols=1,
+        figsize=(12, 8),
+    )
+
+    sns.lineplot(
+        data=daily_sales,
+        x="date",
+        y="amount",
+        marker="o",
+        ax=axes[0],
+    )
+    axes[0].set_title("Total Daily Sales")
+    axes[0].set_xlabel("Date")
+    axes[0].set_ylabel("Sales Amount")
+
+    sns.barplot(
+        data=category_sales,
+        x="category",
+        y="amount",
+        errorbar=None,
+        ax=axes[1],
+    )
+    axes[1].set_title("Total Sales by Category")
+    axes[1].set_xlabel("Category")
+    axes[1].set_ylabel("Sales Amount")
+
+    fig.tight_layout()
+
+    return fig
+
+    
 
 def save_png(fig: plt.Figure, output_path: Path) -> None:
     """
