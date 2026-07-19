@@ -45,9 +45,9 @@ def aggregate_sales(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def visualize(
-        daily_sales: pd.DataFrame,
-        category_sales: pd.DataFrame,
-        ) -> plt.Figure:
+    daily_sales: pd.DataFrame,
+    category_sales: pd.DataFrame,
+) -> plt.Figure:
     """Create a figure containing two sales charts.
 
     The top chart shows the daily sales trend, and the bottom chart
@@ -94,16 +94,22 @@ def visualize(
 
     return fig
 
-    
 
 def save_png(fig: plt.Figure, output_path: Path) -> None:
+    """Save the figure as a PNG image.
+
+    Create the destination directory if it does not exist.
+
+    Args:
+        fig: Figure containing the sales charts.
+        output_path: Path where the PNG file will be saved.
     """
-    """
-    pass
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path)
 
 
 if __name__ == "__main__":
     base_dir = Path(__file__).resolve().parent
     data_dir = base_dir / "data"
 
-    output_path = base_dir / "output" / "sales_visualization.png"
+    output_path = base_dir / "output" / "sales_report.png"
