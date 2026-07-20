@@ -12,7 +12,7 @@ def load_data(data_dir: Path) -> pd.DataFrame:
         data_dir: Path to the directory containing the CSV file.
 
     Returns:
-        DataFrame containing sales logs data (date, category, amount)
+        DataFrame containing sales logs data (date, category, amount).
     """
     csv_path = data_dir / "sales_logs.csv"
     df = pd.read_csv(csv_path, parse_dates=["date"])
@@ -25,7 +25,7 @@ def aggregate_sales(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 
     Args:
         df: DataFrame containing sales log data
-            (date, category, amount)
+            (date, category, amount).
 
     Returns:
         Tuple containing daily sales and sales by category.
@@ -111,5 +111,10 @@ def save_png(fig: plt.Figure, output_path: Path) -> None:
 if __name__ == "__main__":
     base_dir = Path(__file__).resolve().parent
     data_dir = base_dir / "data"
-
     output_path = base_dir / "output" / "sales_report.png"
+
+    df = load_data(data_dir)
+    daily_sales, category_sales = aggregate_sales(df)
+    fig = visualize(daily_sales, category_sales)
+    save_png(fig, output_path)
+    plt.show()
