@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
+@st.cache_data
 def load_data(data_dir: Path) -> pd.DataFrame:
     """Load sales logs CSV file into DataFrame.
 
@@ -15,18 +16,21 @@ def load_data(data_dir: Path) -> pd.DataFrame:
     Returns:
         DataFrame containing sales log data.
     """
-    pass
+    csv_path = data_dir / "sales_logs.csv"
+    df = pd.read_csv(csv_path, parse_dates=["date"])
+
+    return df
 
 
 def filter_by_category(
-        df: pd.DataFrame,
-        categories: list[str],
+    df: pd.DataFrame,
+    categories: list[str],
 ) -> pd.DataFrame:
     """Filter a DataFrame by category.
 
     Args:
         df: DataFrame containing sales log data.
-        category: Category to use for filtering.
+        categories: Categories to use for filtering.
 
     Returns:
         DataFrame containing rows that match the selected category.
@@ -44,3 +48,8 @@ def create_category_sales_chart(category_df: pd.DataFrame) -> plt.Figure:
         Figure showing sales data for the selected category.
     """
     pass
+
+
+base_dir = Path(__file__).resolve().parent
+data_dir = base_dir / "data"
+df = load_data(data_dir)
