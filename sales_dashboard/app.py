@@ -33,9 +33,11 @@ def filter_by_category(
         categories: Categories to use for filtering.
 
     Returns:
-        DataFrame containing rows that match the selected category.
+        DataFrame containing rows that match the selected categories.
     """
-    pass
+    category_df = df[df["category"].isin(categories)]
+
+    return category_df
 
 
 def create_category_sales_chart(category_df: pd.DataFrame) -> plt.Figure:
