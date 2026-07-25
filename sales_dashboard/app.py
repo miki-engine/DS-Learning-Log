@@ -44,12 +44,34 @@ def create_category_sales_chart(category_df: pd.DataFrame) -> plt.Figure:
     """Create a figure from data filtered by category.
 
     Args:
-        category_df: DataFrame filtered by the selected category.
+        category_df: DataFrame filtered by the selected categories.
 
     Returns:
-        Figure showing sales data for the selected category.
+        Figure showing sales data for the selected categories.
     """
-    pass
+    daily_category_sales = (
+        category_df.groupby(["date", "category"], as_index=False)["amount"]
+        .sum()
+        .sort_values(["date", "category"])
+    )
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+
+    sns.lineplot(
+        data=daily_category_sales,
+        x="date",
+        y="amount",
+        hue="category",
+        marker="o",
+        ax=ax,
+    )
+    ax.set_title("Daily Sales by Category")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Sales Amount")
+
+    fig.tight_layout()
+
+    return fig
 
 
 base_dir = Path(__file__).resolve().parent
