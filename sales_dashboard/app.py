@@ -1,9 +1,9 @@
 from pathlib import Path
 
-import streamlit as st
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
+import streamlit as st
 
 
 @st.cache_data
@@ -74,6 +74,34 @@ def create_category_sales_chart(category_df: pd.DataFrame) -> plt.Figure:
     return fig
 
 
+st.title("Sales Analysis Dashboard")
+st.write("Selecting categories will allow you to see the daily sales trends.")
+
 base_dir = Path(__file__).resolve().parent
 data_dir = base_dir / "data"
 df = load_data(data_dir)
+
+categories = sorted(
+    df["category"].dropna().unique().tolist()
+)
+
+selected_categories = st.sidebar.multiselect(
+    label="Select categories",
+    options=categories,
+    default=categories,
+)
+
+if not selected_categories:
+    st.info("Please select at least one category.")
+    st.stop()
+
+category_df = filter_by_category(
+    df,
+    selected_categories,
+)
+
+st.dataframe(category_df)
+
+fig = create_category_sales_chart(category_df)
+st.pyplot(fig)
+plt.close(fig)
