@@ -32,7 +32,17 @@ def prepare_data(
     Returns:
         Training features, testing features, training target, and testing target.
     """
-    pass
+    X = df[["advertising_cost", "coupon_value"]]
+    y = df["sales"]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42,
+    )
+
+    return X_train, X_test, y_train, y_test
 
 
 def train_model(
@@ -53,7 +63,7 @@ def train_model(
 
 def evaluate_model(
     model: LinearRegression,
-     X_test: pd.DataFrame,
+    X_test: pd.DataFrame,
     y_test: pd.Series,
 ) -> tuple[np.ndarray, float, float]:
     """Predict sales and evaluate the model using the test data.
@@ -74,6 +84,7 @@ def main() -> None:
     data_dir = Path(__file__).resolve().parent / "data"
     csv_path = data_dir / "marketing_sales.csv"
     df = load_data(csv_path)
+    X_train, X_test, y_train, y_test = prepare_data(df)
     pass
 
 
