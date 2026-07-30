@@ -7,16 +7,18 @@ from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
 
 
-def load_data(data_dir: Path) -> pd.DataFrame:
+def load_data(csv_path: Path) -> pd.DataFrame:
     """Load marketing sales logs CSV file into DataFrame.
 
     Args:
-        data_dir: Path to the directory containing the CSV file.
+        csv_path: Path to the CSV file.
 
     Returns:
         DataFrame containing marketing sales data.
     """
-    pass
+    df = pd.read_csv(csv_path)
+
+    return df
 
 
 def prepare_data(
@@ -28,14 +30,14 @@ def prepare_data(
         df: DataFrame containing marketing sales data.
 
     Returns:
-        Training features, testing features, trainig target, and testing target.
+        Training features, testing features, training target, and testing target.
     """
     pass
 
 
 def train_model(
-        X_train: pd.DataFrame,
-        y_train: pd.Series,
+    X_train: pd.DataFrame,
+    y_train: pd.Series,
 ) -> LinearRegression:
     """Train a linear regression model.
 
@@ -50,10 +52,10 @@ def train_model(
 
 
 def evaluate_model(
-        model: LinearRegression,
-        X_test: pd.DataFrame,
-        y_test: pd.Series,
-    ) -> tuple[np.ndarray, float, float]:
+    model: LinearRegression,
+     X_test: pd.DataFrame,
+    y_test: pd.Series,
+) -> tuple[np.ndarray, float, float]:
     """Predict sales and evaluate the model using the test data.
 
     Args:
@@ -69,6 +71,9 @@ def evaluate_model(
 
 def main() -> None:
     """Run the sales regression workflow."""
+    data_dir = Path(__file__).resolve().parent / "data"
+    csv_path = data_dir / "marketing_sales.csv"
+    df = load_data(csv_path)
     pass
 
 
