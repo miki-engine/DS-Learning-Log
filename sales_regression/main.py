@@ -58,7 +58,10 @@ def train_model(
     Returns:
         Trained linear regression model.
     """
-    pass
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    return model
 
 
 def evaluate_model(
@@ -85,7 +88,7 @@ def main() -> None:
     csv_path = data_dir / "marketing_sales.csv"
     df = load_data(csv_path)
     X_train, X_test, y_train, y_test = prepare_data(df)
-    pass
+    model = train_model(X_train, y_train)
 
 
 if __name__ == "__main__":
