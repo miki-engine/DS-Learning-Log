@@ -86,6 +86,31 @@ def evaluate_model(
     return y_pred, mae, r2
 
 
+def build_comparison_table(
+    X_test: pd.DataFrame,
+    y_test: pd.Series,
+    y_pred: np.ndarray,
+) -> pd.DataFrame:
+    """Combine the predicted results with the test data.
+
+    Args:
+        X_test: Feature data for model evaluation.
+        y_test: Actual target values for model evaluation.
+        y_pred: Predicted values.
+
+    Returns:
+        DataFrame containing features, actual sales, predicted sales,
+        errors, and absolute errors.
+    """
+    result_df = X_test.copy()
+    result_df["actual_sales"] = y_test
+    result_df["predicted_sales"] = pd.Series(y_pred, index=result_df.index)
+    result_df["error"] = result_df["predicted_sales"] - result_df["actual_sales"]
+    result_df["absolute_error"] = result_df["error"].abs()
+
+    return result_df
+
+
 def main() -> None:
     """Run the sales regression workflow."""
     data_dir = Path(__file__).resolve().parent / "data"
@@ -93,6 +118,11 @@ def main() -> None:
     df = load_data(csv_path)
     X_train, X_test, y_train, y_test = prepare_data(df)
     model = train_model(X_train, y_train)
+    y_pred, mae, r2 = evaluate_model(model, X_test, y_test)
+
+    print(f"Mean absolute error: {mae:.2f}")
+    print(f"R-squared score: {r2:.3f}")
+
 
 
 if __name__ == "__main__":
