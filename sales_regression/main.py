@@ -119,10 +119,13 @@ def main() -> None:
     X_train, X_test, y_train, y_test = prepare_data(df)
     model = train_model(X_train, y_train)
     y_pred, mae, r2 = evaluate_model(model, X_test, y_test)
+    result_df = build_comparison_table(X_test, y_test, y_pred)
+
+    print(result_df)
+    print()
 
     print(f"Mean absolute error: {mae:.2f}")
     print(f"R-squared score: {r2:.3f}")
-
 
 
 if __name__ == "__main__":
