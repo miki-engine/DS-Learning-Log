@@ -1,0 +1,21 @@
+user_id,name,age,signup_date,purchase_amount,status
+U001,Alice,28,2026-05-01,"¥15,000",Active
+U002, Bob ,35,2026/05/02,8000,Inactive
+U003,Charlie,-5,2026-05-03,"¥12,500",Active
+U004,David,42,2026-05-04,,Active
+U001,Alice,28,2026-05-01,"¥15,000",Active
+U005,Eve,NaN,2026-05-06,20000,
+U006,Frank,23,26-05-07,"¥5,000",Active
+U007,Grace,999,2026/05/08,3000,Inactive
+U008,Heidi,31,2026-05-09,¥0,Active
+U009,Ivan,45,2026-05-10,"¥45,000",Active
+U002, Bob ,35,2026/05/02,8000,Inactive
+U010,Judy,29,2026-05-12,¥12000,
+U011,Kevin,33,2026-05-13,"¥9,999",Active
+U012,Laura,NaN,2026-05-14,,Inactive
+U013,Mallory,27,2026-05-15,"¥25,000",Active
+U014,Niaj,0,2026-05-16,"¥1,500",Active
+U015,Olivia,38,2026-05-17,"¥18,000",Active
+U016,Peggy,22,2026-05-18,"¥7,500",
+U017,Trent,31,2026-05-19,"¥30,000",Active
+U018,Victor,150,2026-05-20,"¥50,000",Active
