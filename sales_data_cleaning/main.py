@@ -48,9 +48,18 @@ def validate_schema(df: pd.DataFrame) -> None:
 
 
 def clean_name(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove leading and trailing whitespace from name values.
+
+    Args:
+        df: DataFrame containing dirty user data.
+
+    Returns:
+        DataFrame with cleaned name values.
     """
-    """
-    pass
+    df_copy = df.copy()
+    df_copy["name"] = df_copy["name"].str.strip()
+
+    return df_copy
 
 
 def clean_age(df: pd.DataFrame) -> pd.DataFrame:
