@@ -63,7 +63,7 @@ def clean_name(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean_age(df: pd.DataFrame) -> pd.DataFrame:
-    """Convert age values to a numerical type.
+    """Convert age values to a numeric type.
 
     Args:
         df: DataFrame containing user data.
@@ -78,9 +78,29 @@ def clean_age(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean_purchase_amount(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove unnecessary characters from purchase amount values and 
+    convert them to a numeric type.
+
+    Args:
+        df: DataFrame containing user data.
+
+    Returns:
+        DataFrame with purchase amount values converted to a numeric type.
     """
-    """
-    pass
+    df_copy = df.copy()
+
+    df_copy["purchase_amount"] = (
+        df_copy["purchase_amount"]
+        .astype("string")
+        .str.replace("[¥,]", "", regex=True)
+    )
+
+    df_copy["purchase_amount"] = pd.to_numeric(
+        df_copy["purchase_amount"],
+        errors="coerce",
+    )
+
+    return df_copy
 
 
 def clean_signup_date(df: pd.DataFrame) -> pd.DataFrame:
