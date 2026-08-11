@@ -139,9 +139,18 @@ def clean_signup_date(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove_duplicate rows.
+
+    Args:
+        df: DataFrame containing user data.
+
+    Returns:
+        DataFrame with duplicates rows removed.
     """
-    """
-    pass
+    df_cleaned = df.drop_duplicate(ignore_index=True)
+
+    return df_cleaned
+
 
 
 def remove_invalid_ages(df: pd.DataFrame) -> pd.DataFrame:
@@ -174,6 +183,7 @@ def main() -> None:
     data_dir = Path(__file__).resolve().parent / "data"
     csv_path = data_dir / "dirty_users.csv"
     df = load_data(csv_path)
+    validate_schema(df)
 
 
 if __name__ == "__main__":
