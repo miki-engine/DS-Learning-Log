@@ -104,9 +104,38 @@ def clean_purchase_amount(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean_signup_date(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert signup date values to a datetime type.
+
+    Args:
+        df: DataFrame containing user data.
+
+    Returns:
+        DataFrame with signup date values converted to a datetime type.
     """
-    """
-    pass
+    df_copy = df.copy()
+
+    df_copy["signup_date"] = (
+        df_copy["signup_date"]
+        .astype("string")
+        .str.replace("/", "-", regex=False)
+    )
+
+    parsed_full_year = pd.to_datetime(
+        df_copy["signup_date"],
+        format="%Y-%m-%d",
+        errors="coerce",
+    )
+
+    parsed_short_year = pd.to_datetime(
+        df_copy["signup_date"],
+        format="%y-%m-%d",
+        errors="coerce",
+    )
+
+    df_copy["signup_date"] = parsed_full_year.fillna(parsed_short_year)
+
+    return df_copy
+
 
 
 def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
@@ -142,7 +171,9 @@ def save_data(df: pd.DataFrame, output_path: Path) -> None:
 def main() -> None:
     """
     """
-    pass
+    data_dir = Path(__file__).resolve().parent / "data"
+    csv_path = data_dir / "dirty_users.csv"
+    df = load_data(csv_path)
 
 
 if __name__ == "__main__":
