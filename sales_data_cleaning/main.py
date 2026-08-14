@@ -173,9 +173,35 @@ def remove_invalid_ages(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def handle_missing_values(df: pd.DataFrame) -> pd.DataFrame:
+    """Handle missing purchase amount, age, and status values.
+
+    Args:
+        df: DataFrame containing dirty user data.
+
+    Returns:
+        DataFrame with missing values processed.
     """
-    """
-    pass
+    df_copy = df.copy()
+
+    df_copy = df_copy.replace(
+        r"^\s*&",
+        pd.NA,
+        regex=True,
+    )
+
+    df_copy = df_copy.dropna(
+        subset=["purchase_amount"]
+    )
+
+    df_copy["age"] = df_copy["age"].fillna(
+        df_copy["age"].median()
+    )
+
+    df_copy["status"] = df_copy["status"].fillna(
+        "Unknown"
+    )
+
+    return df_copy
 
 
 def validate_cleaned_data(df: pd.DataFrame) -> None:
