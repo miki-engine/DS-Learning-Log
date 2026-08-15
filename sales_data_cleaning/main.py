@@ -139,15 +139,15 @@ def clean_signup_date(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
-    """Remove_duplicate rows.
+    """Remove duplicate rows.
 
     Args:
         df: DataFrame containing user data.
 
     Returns:
-        DataFrame with duplicates rows removed.
+        DataFrame with duplicate rows removed.
     """
-    df_cleaned = df.drop_duplicate(ignore_index=True)
+    df_cleaned = df.drop_duplicates(ignore_index=True)
 
     return df_cleaned
 
@@ -184,7 +184,7 @@ def handle_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     df_copy = df.copy()
 
     df_copy = df_copy.replace(
-        r"^\s*&",
+        r"^\s*$",
         pd.NA,
         regex=True,
     )
@@ -205,9 +205,43 @@ def handle_missing_values(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def validate_cleaned_data(df: pd.DataFrame) -> None:
+    """Check if the cleaning was completed correctly.
+
+    Args:
+        df: DataFrame containing user data.
+
+    Raises:
+        ValueError: If the cleaned data does not satisfy the validation rules.
     """
-    """
-    pass
+    if df.duplicated().any():
+        raise ValueError("Duplicate rows remain.")
+
+    if not pd.api.types.is_numeric_dtype(df["age"]):
+        raise ValueError("age is not a numeric type.")
+
+    if not pd.api.types.is_numeric_dtype(df["purchase_amount"]):
+        raise ValueError("purchase_amount is not a numeric type.")
+    
+    if not pd.api.types.is_datetime64_any_dtype(df["signup_date"]):
+        raise ValueError("signup_date is not a datetime type.")
+
+    if df["purchase_amount"].isna().any():
+        raise ValueError("Missing values remain in purchase_amount.")
+
+    if df["age"].isna().any():
+        raise ValueError("Missing values remain in age.")
+
+    if df["status"].isna().any():
+        raise ValueError("Missing values remain in status.")
+
+    if df["signup_date"].isna().any():
+        raise ValueError("Missing values remain in signup_date.")
+
+    if ((df["age"] <= 0) | (df["age"] >= 100)).any():
+        raise ValueError("Age values must satisfy 0 < age < 100.")
+
+    if (df["name"] != df["name"].str.strip()).any():
+        raise ValueError("name contains leading or trailing whitespace.")
 
 
 def save_data(df: pd.DataFrame, output_path: Path) -> None:
