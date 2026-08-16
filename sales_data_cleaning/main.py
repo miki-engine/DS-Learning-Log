@@ -154,20 +154,22 @@ def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def remove_invalid_ages(df: pd.DataFrame) -> pd.DataFrame:
-    """Replace invalid age values with missing values.
+    """Remove rows with invalid age values.
 
     Args:
         df: DataFrame containing dirty user data.
 
     Returns:
-        DataFrame with invalid age values replaced with missing values.
+        DataFrame with rows containing invalid age values removed.
     """
     df_copy = df.copy()
-    
-    df_copy.loc[
-        (df_copy["age"] <= 0) | (df_copy["age"] >= 100),
-        "age",
-    ] = pd.NA
+
+    valid_age = (
+        df_copy["age"].isna()
+        | ((df_copy["age"] > 0) & (df_copy["age"] < 100))
+    )
+
+    df_copy = df_copy[valid_age]
     
     return df_copy
 
