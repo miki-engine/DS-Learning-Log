@@ -247,9 +247,16 @@ def validate_cleaned_data(df: pd.DataFrame) -> None:
 
 
 def save_data(df: pd.DataFrame, output_path: Path) -> None:
+    """Save DataFrame as a CSV file.
+
+    Create the destination directory if it does not exist.
+
+    Args:
+        df: DataFrame containing user data.
+        output_path: Path where the CSV file will be saved.
     """
-    """
-    pass
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(output_path, index=False)
 
 
 def main() -> None:
