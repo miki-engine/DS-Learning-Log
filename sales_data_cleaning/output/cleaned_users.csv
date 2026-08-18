@@ -1,0 +1,13 @@
+user_id,name,age,signup_date,purchase_amount,status
+U001,Alice,28.0,2026-05-01,15000,Active
+U002,Bob,35.0,2026-05-02,8000,Inactive
+U005,Eve,31.0,2026-05-06,20000,Unknown
+U006,Frank,23.0,2026-05-07,5000,Active
+U008,Heidi,31.0,2026-05-09,0,Active
+U009,Ivan,45.0,2026-05-10,45000,Active
+U010,Judy,29.0,2026-05-12,12000,Unknown
+U011,Kevin,33.0,2026-05-13,9999,Active
+U013,Mallory,27.0,2026-05-15,25000,Active
+U015,Olivia,38.0,2026-05-17,18000,Active
+U016,Peggy,22.0,2026-05-18,7500,Unknown
+U017,Trent,31.0,2026-05-19,30000,Active

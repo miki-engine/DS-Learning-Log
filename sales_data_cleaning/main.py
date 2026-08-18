@@ -137,7 +137,6 @@ def clean_signup_date(df: pd.DataFrame) -> pd.DataFrame:
     return df_copy
 
 
-
 def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     """Remove duplicate rows.
 
@@ -150,7 +149,6 @@ def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     df_cleaned = df.drop_duplicates(ignore_index=True)
 
     return df_cleaned
-
 
 
 def remove_invalid_ages(df: pd.DataFrame) -> pd.DataFrame:
@@ -260,12 +258,27 @@ def save_data(df: pd.DataFrame, output_path: Path) -> None:
 
 
 def main() -> None:
+    """Run the user data cleaning workflow.
     """
-    """
-    data_dir = Path(__file__).resolve().parent / "data"
-    csv_path = data_dir / "dirty_users.csv"
+    base_dir = Path(__file__).resolve().parent
+
+    csv_path = base_dir / "data" / "dirty_users.csv"
+    output_path = base_dir / "output" / "cleaned_users.csv"
+
     df = load_data(csv_path)
     validate_schema(df)
+
+    df = clean_name(df)
+    df = clean_age(df)
+    df = clean_purchase_amount(df)
+    df = clean_signup_date(df)
+    df = remove_duplicates(df)
+    df = remove_invalid_ages(df)
+    df = handle_missing_values(df)
+    df = remove_duplicates(df)
+
+    validate_cleaned_data(df)
+    save_data(df, output_path)
 
 
 if __name__ == "__main__":
