@@ -78,7 +78,7 @@ def clean_age(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean_purchase_amount(df: pd.DataFrame) -> pd.DataFrame:
-    """Remove unnecessary characters from purchase amount values and 
+    """Remove unnecessary characters from purchase amount values and
     convert them to a numeric type.
 
     Args:
@@ -167,8 +167,8 @@ def remove_invalid_ages(df: pd.DataFrame) -> pd.DataFrame:
         | ((df_copy["age"] > 0) & (df_copy["age"] < 100))
     )
 
-    df_copy = df_copy[valid_age]
-    
+    df_copy = df_copy.loc[valid_age].copy()
+
     return df_copy
 
 
@@ -221,7 +221,7 @@ def validate_cleaned_data(df: pd.DataFrame) -> None:
 
     if not pd.api.types.is_numeric_dtype(df["purchase_amount"]):
         raise ValueError("purchase_amount is not a numeric type.")
-    
+
     if not pd.api.types.is_datetime64_any_dtype(df["signup_date"]):
         raise ValueError("signup_date is not a datetime type.")
 
@@ -257,27 +257,41 @@ def save_data(df: pd.DataFrame, output_path: Path) -> None:
     df.to_csv(output_path, index=False)
 
 
-def main() -> None:
-    """Run the user data cleaning workflow.
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean and validate user data.
+
+    Args:
+        df: DataFrame containing user data.
+
+    Returns:
+        Cleaned and validated DataFrame.
     """
-    base_dir = Path(__file__).resolve().parent
-
-    csv_path = base_dir / "data" / "dirty_users.csv"
-    output_path = base_dir / "output" / "cleaned_users.csv"
-
-    df = load_data(csv_path)
     validate_schema(df)
 
     df = clean_name(df)
     df = clean_age(df)
     df = clean_purchase_amount(df)
     df = clean_signup_date(df)
-    df = remove_duplicates(df)
-    df = remove_invalid_ages(df)
-    df = handle_missing_values(df)
+
     df = remove_duplicates(df)
 
+    df = remove_invalid_ages(df)
+    df = handle_missing_values(df)
+
     validate_cleaned_data(df)
+
+    return df
+
+
+def main() -> None:
+    """Run the user data cleaning workflow."""
+    base_dir = Path(__file__).resolve().parent
+
+    csv_path = base_dir / "data" / "dirty_users.csv"
+    output_path = base_dir / "output" / "cleaned_users.csv"
+
+    df = load_data(csv_path)
+    df = clean_data(df)
     save_data(df, output_path)
 
 
