@@ -8,9 +8,17 @@ from sklearn.model_selection import train_test_split
 
 
 def load_data(csv_path: Path) -> pd.DataFrame:
+    """Load customer behavior logs CSV file into DataFrame.
+
+    Args:
+        csv_path: Path to the CSV file.
+
+    Returns:
+        DataFrame containing customer behavior data.
     """
-    """
-    pass
+    df = pd.read_csv(csv_path)
+
+    return df
 
 
 def prepare_data(
