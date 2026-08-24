@@ -24,9 +24,25 @@ def load_data(csv_path: Path) -> pd.DataFrame:
 def prepare_data(
     df: pd.DataFrame,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    """Split the data into training and testing sets.
+
+    Args:
+        df: DataFrame containing customer behavior data.
+
+    Returns:
+        Training features, testing features, training target, and testing target.
     """
-    """
-    pass
+    X = df[["site_visits", "time_on_site", "email_opened"]]
+    y = df["purchased"]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42,
+    )
+
+    return X_train, X_test, y_train, y_test
 
 
 def train_model(
