@@ -49,9 +49,19 @@ def train_model(
     X_train: pd.DataFrame,
     y_train: pd.Series,
 ) -> LogisticRegression:
+    """Train a logistic regression model.
+
+    Args:
+        X_train: Feature data for model training.
+        y_train: Target data for model training.
+
+    Returns:
+        Trained logistic regression model.
     """
-    """
-    pass
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
+
+    return model
 
 
 def predict_labels(
