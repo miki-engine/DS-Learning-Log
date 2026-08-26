@@ -86,9 +86,19 @@ def evaluate_model(
     y_test: pd.Series,
     y_pred: np.ndarray,
 ) -> tuple[float, np.ndarray]:
+    """Evaluate the model using the test data.
+
+    Args:
+        y_test: Target data for model evaluation.
+        y_pred: Predicted labels.
+
+    Returns:
+        Accuracy score and confusion matrix.
     """
-    """
-    pass
+    accuracy = accuracy_score(y_test, y_pred)
+    conf_matrix = confusion_matrix(y_test, y_pred)
+
+    return accuracy, conf_matrix
 
 
 def build_comparison_table(
