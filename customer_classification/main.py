@@ -68,9 +68,18 @@ def predict_labels(
     model: LogisticRegression,
     X_test: pd.DataFrame,
 ) -> np.ndarray:
+    """Predict class labels for the test data.
+
+    Args:
+        model: Trained logistic regression model.
+        X_test: Feature data for model evaluation.
+
+    Returns:
+        Predicted labels.
     """
-    """
-    pass
+    y_pred = model.predict(X_test)
+
+    return y_pred
 
 
 def evaluate_model(
