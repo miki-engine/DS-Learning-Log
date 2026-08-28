@@ -123,15 +123,29 @@ def build_comparison_table(
         y_pred,
         index=result_df.index,
     )
-    
+
     return result_df
 
 
-
 def main() -> None:
-    """
-    """
-    pass
+    """Run the customer classification workflow."""
+    data_dir = Path(__file__).resolve().parent / "data"
+    csv_path = data_dir / "customer_behavior.csv"
+    df = load_data(csv_path)
+    X_train, X_test, y_train, y_test = prepare_data(df)
+    model = train_model(X_train, y_train)
+    y_pred = predict_labels(model, X_test)
+    accuracy, conf_matrix = evaluate_model(y_test, y_pred)
+    result_df = build_comparison_table(X_test, y_test, y_pred)
+
+    print(result_df)
+    print()
+
+    print(f"Accuracy: {accuracy:.2%}")
+    print()
+
+    print("Confusion matrix:")
+    print(conf_matrix)
 
 
 if __name__ == "__main__":
