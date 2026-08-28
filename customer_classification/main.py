@@ -106,9 +106,26 @@ def build_comparison_table(
     y_test: pd.Series,
     y_pred: np.ndarray,
 ) -> pd.DataFrame:
+    """Combine predicted labels with the test data.
+
+    Args:
+        X_test: Feature data for model evaluation.
+        y_test: Actual target values for model evaluation.
+        y_pred: Predicted class labels.
+
+    Returns:
+        DataFrame containing features, actual purchase labels,
+        and predicted purchase labels.
     """
-    """
-    pass
+    result_df = X_test.copy()
+    result_df["actual_purchase"] = y_test
+    result_df["predicted_purchase"] = pd.Series(
+        y_pred,
+        index=result_df.index,
+    )
+    
+    return result_df
+
 
 
 def main() -> None:
