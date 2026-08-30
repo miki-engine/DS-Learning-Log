@@ -1,10 +1,24 @@
 from pathlib import Path
+from typing import NamedTuple
 
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
+
+
+class SplitData(NamedTuple):
+    X_train: pd.DataFrame
+    X_test: pd.DataFrame
+    y_train: pd.Series
+    y_test: pd.Series
+
+
+FEATURE_COLUMNS = ["site_visits", "time_on_site", "email_opened"]
+TARGET = "purchased"
+TEST_SIZE = 0.2
+RANDOM_SEED = 42
 
 
 def load_data(csv_path: Path) -> pd.DataFrame:
@@ -23,26 +37,28 @@ def load_data(csv_path: Path) -> pd.DataFrame:
 
 def prepare_data(
     df: pd.DataFrame,
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+) -> SplitData:
     """Split the data into training and testing sets.
 
     Args:
         df: DataFrame containing customer behavior data.
 
     Returns:
-        Training features, testing features, training target, and testing target.
+        Split training and testing data.
     """
-    X = df[["site_visits", "time_on_site", "email_opened"]]
-    y = df["purchased"]
+    X = df[FEATURE_COLUMNS]
+    y = df[TARGET]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=0.2,
-        random_state=42,
+    split_data = SplitData(
+        *train_test_split(
+            X,
+            y,
+            test_size=TEST_SIZE,
+            random_state=RANDOM_SEED,
+        )
     )
 
-    return X_train, X_test, y_train, y_test
+    return split_data
 
 
 def train_model(
@@ -127,25 +143,51 @@ def build_comparison_table(
     return result_df
 
 
+def print_results(
+    result_df: pd.DataFrame,
+    accuracy: float,
+    conf_matrix: np.ndarray,
+) -> None:
+    """Print results.
+
+    Args:
+        result_df: DataFrame containing features, actual purchase labels,
+        and predicted purchase labels.
+        accuracy: Accuracy score.
+        conf_matrix: Confusion matrix.
+    """
+    print(result_df)
+    print()
+    print(f"Accuracy: {accuracy:.2%}")
+    print()
+    print("Confusion matrix:")
+    print(conf_matrix)
+
+
 def main() -> None:
     """Run the customer classification workflow."""
     data_dir = Path(__file__).resolve().parent / "data"
     csv_path = data_dir / "customer_behavior.csv"
     df = load_data(csv_path)
-    X_train, X_test, y_train, y_test = prepare_data(df)
-    model = train_model(X_train, y_train)
-    y_pred = predict_labels(model, X_test)
-    accuracy, conf_matrix = evaluate_model(y_test, y_pred)
-    result_df = build_comparison_table(X_test, y_test, y_pred)
-
-    print(result_df)
-    print()
-
-    print(f"Accuracy: {accuracy:.2%}")
-    print()
-
-    print("Confusion matrix:")
-    print(conf_matrix)
+    split_data = prepare_data(df)
+    model = train_model(
+        split_data.X_train,
+        split_data.y_train,
+    )
+    y_pred = predict_labels(
+        model,
+        split_data.X_test,
+    )
+    accuracy, conf_matrix = evaluate_model(
+        split_data.y_test,
+        y_pred,
+    )
+    result_df = build_comparison_table(
+        split_data.X_test,
+        split_data.y_test,
+        y_pred,
+    )
+    print_results(result_df, accuracy, conf_matrix)
 
 
 if __name__ == "__main__":
