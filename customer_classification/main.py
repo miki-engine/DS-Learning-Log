@@ -9,10 +9,22 @@ from sklearn.model_selection import train_test_split
 
 
 class SplitData(NamedTuple):
+    """Represent divided data.
+
+    Attributes:
+        X_train: Feature data for model training.
+        X_test: Feature data for model evaluation.
+        y_train: Target data for model training.
+        y_test: Target data for model evaluation.
+    """
     X_train: pd.DataFrame
     X_test: pd.DataFrame
     y_train: pd.Series
     y_test: pd.Series
+
+
+DATA_DIR = Path(__file__).resolve().parent / "data"
+CSV_PATH = DATA_DIR / "customer_behavior.csv"
 
 
 FEATURE_COLUMNS = ["site_visits", "time_on_site", "email_opened"]
@@ -55,6 +67,7 @@ def prepare_data(
             y,
             test_size=TEST_SIZE,
             random_state=RANDOM_SEED,
+            stratify=y,
         )
     )
 
@@ -112,7 +125,11 @@ def evaluate_model(
         Accuracy score and confusion matrix.
     """
     accuracy = accuracy_score(y_test, y_pred)
-    conf_matrix = confusion_matrix(y_test, y_pred)
+    conf_matrix = confusion_matrix(
+        y_test,
+        y_pred,
+        labels=[0, 1],
+    )
 
     return accuracy, conf_matrix
 
@@ -152,7 +169,7 @@ def print_results(
 
     Args:
         result_df: DataFrame containing features, actual purchase labels,
-        and predicted purchase labels.
+            and predicted purchase labels.
         accuracy: Accuracy score.
         conf_matrix: Confusion matrix.
     """
@@ -166,9 +183,7 @@ def print_results(
 
 def main() -> None:
     """Run the customer classification workflow."""
-    data_dir = Path(__file__).resolve().parent / "data"
-    csv_path = data_dir / "customer_behavior.csv"
-    df = load_data(csv_path)
+    df = load_data(CSV_PATH)
     split_data = prepare_data(df)
     model = train_model(
         split_data.X_train,
