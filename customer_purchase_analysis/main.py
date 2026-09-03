@@ -5,19 +5,27 @@ import pandas as pd
 import seaborn as sns
 
 
+BASE_DIR = Path(__file__).resolve().parent
+CSV_PATH = BASE_DIR / "data" / "web_behavior_data.csv"
+OUTPUT_DIR = BASE_DIR / "output"
+OUTPUT_PATH_HEATMAP = OUTPUT_DIR / "heatmap.png"
+OUTPUT_PATH_SCATTERPLOT = OUTPUT_DIR / "scatterplot.png"
+OUTPUT_PATH_BOXPLOT = OUTPUT_DIR / "boxplot.png"
+
+
 def load_data(csv_path: Path) -> pd.DataFrame:
     """
     """
     pass
 
 
-def calculate_basic(df: pd.DataFrame) -> None:
+def print_basic_statistics(df: pd.DataFrame) -> None:
     """
     """
     pass
 
 
-def group_aggregation(df: pd.DataFrame) -> None:
+def print_group_aggregation(df: pd.DataFrame) -> None:
     """
     """
     pass
@@ -60,9 +68,19 @@ def print_insights() -> None:
 
 
 def main() -> None:
+    """Run customer purchase analysis workflow.
     """
-    """
-    pass
+    df = load_data(CSV_PATH)
+    print_basic_statistics(df)
+    print_group_aggregation(df)
+    corr_df = calculate_correlation(df)
+    fig_heatmap = create_heatmap(corr_df)
+    fig_scatterplot = create_scatterplot(df)
+    fig_boxplot = create_boxplot(df)
+    save_img(fig_heatmap, OUTPUT_PATH_HEATMAP)
+    save_img(fig_scatterplot, OUTPUT_PATH_SCATTERPLOT)
+    save_img(fig_boxplot, OUTPUT_PATH_BOXPLOT)
+    print_insights()
 
 
 if __name__ == "__main__":
