@@ -14,9 +14,15 @@ OUTPUT_PATH_BOXPLOT = OUTPUT_DIR / "boxplot.png"
 
 
 def load_data(csv_path: Path) -> pd.DataFrame:
+    """Load customer web behavior data CSV file into DataFrame.
+
+    Args:
+        csv_path: Path to the CSV file.
+
+    Returns:
+        DataFrame containing customer web behavior data.
     """
-    """
-    pass
+    return pd.read_csv(csv_path)
 
 
 def print_basic_statistics(df: pd.DataFrame) -> None:
