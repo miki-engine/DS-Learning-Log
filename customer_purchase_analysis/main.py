@@ -26,9 +26,12 @@ def load_data(csv_path: Path) -> pd.DataFrame:
 
 
 def print_basic_statistics(df: pd.DataFrame) -> None:
+    """Print basic statistics of the data.
+
+    Args:
+        df: DataFrame containing customer web behavior data.
     """
-    """
-    pass
+    print(df.describe())
 
 
 def print_group_aggregation(df: pd.DataFrame) -> None:
@@ -74,8 +77,7 @@ def print_insights() -> None:
 
 
 def main() -> None:
-    """Run customer purchase analysis workflow.
-    """
+    """Run customer purchase analysis workflow."""
     df = load_data(CSV_PATH)
     print_basic_statistics(df)
     print_group_aggregation(df)
