@@ -35,9 +35,21 @@ def print_basic_statistics(df: pd.DataFrame) -> None:
 
 
 def print_group_aggregation(df: pd.DataFrame) -> None:
+    """Compare mean numerical values between buyers and non-buyers.
+
+    Args:
+        df: DataFrame containing customer web behavior data.
     """
-    """
-    pass
+    columns = [
+    "age",
+    "site_visits",
+    "time_on_site_min",
+    "pages_viewed",
+    ]
+
+    purchase_group_means = df.groupby("purchased")[columns].mean()
+
+    print(purchase_group_means)
 
 
 def calculate_correlation(df: pd.DataFrame) -> pd.DataFrame:
