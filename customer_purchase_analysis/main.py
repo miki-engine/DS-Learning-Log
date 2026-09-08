@@ -41,10 +41,10 @@ def print_group_aggregation(df: pd.DataFrame) -> None:
         df: DataFrame containing customer web behavior data.
     """
     columns = [
-    "age",
-    "site_visits",
-    "time_on_site_min",
-    "pages_viewed",
+        "age",
+        "site_visits",
+        "time_on_site_min",
+        "pages_viewed",
     ]
 
     purchase_group_means = df.groupby("purchased")[columns].mean()
@@ -53,9 +53,34 @@ def print_group_aggregation(df: pd.DataFrame) -> None:
 
 
 def calculate_correlation(df: pd.DataFrame) -> pd.DataFrame:
+    """Calculate the correlation coefficient between each variable.
+
+    Args:
+        df: DataFrame containing customer web behavior data.
+
+    Returns:
+        corr_df: DataFrame including correlation coefficients between all variables.
     """
+    corr_df = df.select_dtypes(include="number").corr()
+
+    return corr_df
+
+
+def print_purchase_correlation(corr_df: pd.DataFrame) -> None:
+    """Print the correlation coefficient to the purchased variable.
+
+    Args:
+        corr_df: DataFrame including correlation coefficients between all variables.
     """
-    pass
+    purchased_corr = corr_df["purchased"]
+    purchased_corr_dropped = purchased_corr.drop("purchased")
+    sorted_corr = purchased_corr_dropped.sort_values(
+        key=abs,
+        ascending=False,
+    )
+
+    print(sorted_corr)
+    
 
 
 def create_heatmap(corr_df: pd.DataFrame) -> plt.Figure:
@@ -94,6 +119,7 @@ def main() -> None:
     print_basic_statistics(df)
     print_group_aggregation(df)
     corr_df = calculate_correlation(df)
+    print_purchase_correlation(corr_df)
     fig_heatmap = create_heatmap(corr_df)
     fig_scatterplot = create_scatterplot(df)
     fig_boxplot = create_boxplot(df)
