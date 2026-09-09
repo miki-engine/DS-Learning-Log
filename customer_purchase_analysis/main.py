@@ -66,8 +66,17 @@ def calculate_correlation(df: pd.DataFrame) -> pd.DataFrame:
     return corr_df
 
 
+def print_correlation_matrix(corr_df: pd.DataFrame) -> None:
+    """Print the correlation matrix.
+
+    Args:
+        corr_df: DataFrame including correlation coefficients between all variables.
+    """
+    print(corr_df)
+
+
 def print_purchase_correlation(corr_df: pd.DataFrame) -> None:
-    """Print the correlation coefficient to the purchased variable.
+    """Print the correlations with the purchased variable.
 
     Args:
         corr_df: DataFrame including correlation coefficients between all variables.
@@ -80,7 +89,6 @@ def print_purchase_correlation(corr_df: pd.DataFrame) -> None:
     )
 
     print(sorted_corr)
-    
 
 
 def create_heatmap(corr_df: pd.DataFrame) -> plt.Figure:
@@ -119,6 +127,7 @@ def main() -> None:
     print_basic_statistics(df)
     print_group_aggregation(df)
     corr_df = calculate_correlation(df)
+    print_correlation_matrix(corr_df)
     print_purchase_correlation(corr_df)
     fig_heatmap = create_heatmap(corr_df)
     fig_scatterplot = create_scatterplot(df)
