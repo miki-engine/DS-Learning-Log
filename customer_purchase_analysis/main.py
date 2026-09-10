@@ -121,9 +121,39 @@ def create_heatmap(corr_df: pd.DataFrame) -> plt.Figure:
 
 
 def create_scatterplot(df: pd.DataFrame) -> plt.Figure:
+    """Create scatter plot of time spent on site and number of pages viewed.
+
+    Args:
+        df: DataFrame containing customer web behavior data.
+
+    Returns:
+        Figure showing a scatter plot of time spent on site and number of pages viewed.
     """
-    """
-    pass
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    colors = {
+        1: "purple",
+        0: "green",
+    }
+
+    sns.scatterplot(
+        data=df,
+        x="time_on_site_min",
+        y="pages_viewed",
+        hue="purchased",
+        hue_order=[0, 1],
+        palette=colors,
+        s=100,
+        ax=ax,
+    )
+
+    ax.set_title("Time on Site vs Pages Viewed")
+    ax.set_xlabel("Time on site (min)")
+    ax.set_ylabel("Pages Viewed")
+    ax.grid(True)
+    fig.tight_layout()
+
+    return fig
 
 
 def create_boxplot(df: pd.DataFrame) -> plt.Figure:
