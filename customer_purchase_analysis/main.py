@@ -92,9 +92,32 @@ def print_purchase_correlation(corr_df: pd.DataFrame) -> None:
 
 
 def create_heatmap(corr_df: pd.DataFrame) -> plt.Figure:
+    """Create a heatmap of the correlation matrix.
+
+    Args:
+        corr_df: DataFrame including correlation coefficients between all variables.
+
+    Returns:
+        Figure showing a heatmap of the correlation matrix.
     """
-    """
-    pass
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    sns.heatmap(
+        corr_df,
+        annot=True,
+        cmap="coolwarm",
+        vmin=-1,
+        vmax=1,
+        center=0,
+        fmt=".2f",
+        linewidth=0.5,
+        ax=ax,
+    )
+
+    ax.set_title("Correlation Matrix Heatmap")
+    fig.tight_layout()
+
+    return fig
 
 
 def create_scatterplot(df: pd.DataFrame) -> plt.Figure:
