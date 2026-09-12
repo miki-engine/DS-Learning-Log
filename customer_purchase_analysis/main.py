@@ -157,9 +157,33 @@ def create_scatterplot(df: pd.DataFrame) -> plt.Figure:
 
 
 def create_boxplot(df: pd.DataFrame) -> plt.Figure:
+    """Create a box plot showing time on site by purchase status.
+
+    Args:
+        df: DataFrame containing customer web behavior data.
+
+    Returns:
+        Figure showing a box plot of dwell time by buyers and non-buyers.
     """
-    """
-    pass
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    sns.boxplot(
+        data=df,
+        x="purchased",
+        y="time_on_site_min",
+        order=[0, 1],
+        ax=ax,
+    )
+
+    ax.set_title("Time on Site by Purchase Status")
+    ax.set_ylabel("Time on Site (min)")
+    ax.set_xlabel("Purchase Status")
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(["Non-buyers", "Buyers"])
+
+    fig.tight_layout()
+
+    return fig
 
 
 def save_img(fig: plt.Figure, output_path: Path) -> None:
