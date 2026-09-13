@@ -163,7 +163,7 @@ def create_boxplot(df: pd.DataFrame) -> plt.Figure:
         df: DataFrame containing customer web behavior data.
 
     Returns:
-        Figure showing a box plot of dwell time by buyers and non-buyers.
+        Figure showing a box plot of time on site by buyers and non-buyers.
     """
     fig, ax = plt.subplots(figsize=(8, 6))
 
@@ -187,9 +187,16 @@ def create_boxplot(df: pd.DataFrame) -> plt.Figure:
 
 
 def save_img(fig: plt.Figure, output_path: Path) -> None:
+    """Save the figure as a PNG image.
+
+    Create the destination directory if it does not exist.
+
+    Args:
+        fig: Figure containing a chart.
+        output_path: Path where the PNG file will be saved.
     """
-    """
-    pass
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, dpi=300, bbox_inches="tight")
 
 
 def print_insights() -> None:
@@ -210,8 +217,11 @@ def main() -> None:
     fig_scatterplot = create_scatterplot(df)
     fig_boxplot = create_boxplot(df)
     save_img(fig_heatmap, OUTPUT_PATH_HEATMAP)
+    plt.close(fig_heatmap)
     save_img(fig_scatterplot, OUTPUT_PATH_SCATTERPLOT)
+    plt.close(fig_scatterplot)
     save_img(fig_boxplot, OUTPUT_PATH_BOXPLOT)
+    plt.close(fig_boxplot)
     print_insights()
 
 
