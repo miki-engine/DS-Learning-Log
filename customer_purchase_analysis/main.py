@@ -110,7 +110,7 @@ def create_heatmap(corr_df: pd.DataFrame) -> plt.Figure:
         vmax=1,
         center=0,
         fmt=".2f",
-        linewidth=0.5,
+        linewidths=0.5,
         ax=ax,
     )
 
@@ -200,9 +200,31 @@ def save_img(fig: plt.Figure, output_path: Path) -> None:
 
 
 def print_insights() -> None:
-    """
-    """
-    pass
+    """Print insights gleaned from the data."""
+    insights = [
+        (
+            "Purchasers spend approximately 2.5 times longer on the site " 
+            "than non-purchasers."
+        ),
+        (
+            "User age shows little correlation with web behavior "
+            "or purchase status."
+        ),
+        (
+            "Site visits, time spent on the site, and page views all show "
+            "strong positive correlations with purchase status, "
+            "with correlation coefficients of around 0.86–0.87."
+        ),
+        (
+            "Email opening also shows a positive correlation with purchase "
+            "status at approximately 0.69, although the relationship is "
+            "weaker than those of site visits, time spent on the site, "
+            "and page views."
+        ),
+    ]
+
+    for insight in insights:
+        print(f"•{insight}\n")
 
 
 def main() -> None:
