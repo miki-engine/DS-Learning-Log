@@ -31,6 +31,7 @@ def print_basic_statistics(df: pd.DataFrame) -> None:
     Args:
         df: DataFrame containing customer web behavior data.
     """
+    print("\n=== Basic Statistics ===")
     print(df.describe())
 
 
@@ -49,6 +50,7 @@ def print_group_aggregation(df: pd.DataFrame) -> None:
 
     purchase_group_means = df.groupby("purchased")[columns].mean()
 
+    print("\n=== Purchase Group Means ===")
     print(purchase_group_means)
 
 
@@ -59,11 +61,9 @@ def calculate_correlation(df: pd.DataFrame) -> pd.DataFrame:
         df: DataFrame containing customer web behavior data.
 
     Returns:
-        corr_df: DataFrame including correlation coefficients between all variables.
+        DataFrame including correlation coefficients between all variables.
     """
-    corr_df = df.select_dtypes(include="number").corr()
-
-    return corr_df
+    return df.select_dtypes(include="number").corr()
 
 
 def print_correlation_matrix(corr_df: pd.DataFrame) -> None:
@@ -72,6 +72,7 @@ def print_correlation_matrix(corr_df: pd.DataFrame) -> None:
     Args:
         corr_df: DataFrame including correlation coefficients between all variables.
     """
+    print("\n=== Correlation Matrix ===")
     print(corr_df)
 
 
@@ -81,13 +82,13 @@ def print_purchase_correlation(corr_df: pd.DataFrame) -> None:
     Args:
         corr_df: DataFrame including correlation coefficients between all variables.
     """
-    purchased_corr = corr_df["purchased"]
-    purchased_corr_dropped = purchased_corr.drop("purchased")
-    sorted_corr = purchased_corr_dropped.sort_values(
+    purchase_corr = corr_df["purchased"].drop("purchased")
+    sorted_corr = purchase_corr.sort_values(
         key=abs,
         ascending=False,
     )
 
+    print("\n=== Correlation with Purchase ===")
     print(sorted_corr)
 
 
@@ -203,7 +204,7 @@ def print_insights() -> None:
     """Print insights gleaned from the data."""
     insights = [
         (
-            "Purchasers spend approximately 2.5 times longer on the site " 
+            "Purchasers spend approximately 2.5 times longer on the site "
             "than non-purchasers."
         ),
         (
@@ -223,8 +224,9 @@ def print_insights() -> None:
         ),
     ]
 
+    print("\n=== Insights ===")
     for insight in insights:
-        print(f"•{insight}\n")
+        print(f"• {insight}\n")
 
 
 def main() -> None:
