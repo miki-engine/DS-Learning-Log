@@ -1,0 +1,16 @@
+order_id,user_id,category,amount,order_date
+101,1,Electronics,35000,2026-06-01
+102,2,Apparel,8000,2026-06-02
+103,1,Apparel,12000,2026-06-03
+104,3,Groceries,5000,2026-06-04
+105,4,Electronics,42000,2026-06-05
+106,2,Groceries,3000,2026-06-06
+107,5,Apparel,15000,2026-06-07
+108,6,Electronics,28000,2026-06-08
+109,1,Groceries,6500,2026-06-09
+110,7,Electronics,55000,2026-06-10
+111,8,Apparel,9500,2026-06-11
+112,3,Electronics,38000,2026-06-12
+113,9,Groceries,4500,2026-06-13
+114,10,Apparel,11000,2026-06-14
+115,5,Electronics,32000,2026-06-15

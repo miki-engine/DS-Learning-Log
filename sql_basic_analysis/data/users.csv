@@ -1,0 +1,11 @@
+user_id,name,membership,age,signup_date
+1,Alice,Premium,28,2026-05-01
+2,Bob,Standard,35,2026-05-02
+3,Charlie,Premium,42,2026-05-03
+4,David,Standard,25,2026-05-04
+5,Eve,Premium,31,2026-05-05
+6,Frank,Standard,22,2026-05-06
+7,Grace,Premium,45,2026-05-07
+8,Heidi,Standard,38,2026-05-08
+9,Ivan,Premium,29,2026-05-09
+10,Judy,Standard,33,2026-05-10
