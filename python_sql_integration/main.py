@@ -34,6 +34,22 @@ try:
     df_products.to_sql("products", conn, if_exists="replace", index=False)
     df_users.to_sql("users", conn, if_exists="replace", index=False)
 
+    query = """
+    SELECT
+        p.product_name,
+        SUM(o.quantity) AS total_quantity,
+        SUM(p.price * o.quantity) AS total_revenue
+    FROM products AS p
+    INNER JOIN orders AS o
+        ON p.product_id = o.product_id
+    WHERE p.category = 'Electronics'
+    GROUP BY p.product_name
+    ORDER BY total_revenue DESC;
+    """
+
+    result_df = pd.read_sql_query(query, conn)
+    print(result_df)
+
 
 finally:
 
