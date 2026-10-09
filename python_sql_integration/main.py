@@ -4,37 +4,33 @@ from pathlib import Path
 import pandas as pd
 
 
-DATA_DIR = Path(__file__).resolve().parent / "data"
-ORDERS_PATH = DATA_DIR / "orders.csv"
-PRODUCTS_PATH = DATA_DIR / "products.csv"
-USERS_PATH = DATA_DIR / "users.csv"
-DB_PATH = Path(__file__).resolve().parent / "ecommerce.db"
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
+DB_PATH = BASE_DIR / "ecommerce.db"
 
-df_orders = pd.read_csv(ORDERS_PATH)
-df_products = pd.read_csv(PRODUCTS_PATH)
-df_users = pd.read_csv(USERS_PATH)
-
-dfs = {
-    "orders": df_orders,
-    "products": df_products,
-    "users": df_users,
+csv_paths = {
+    "orders": DATA_DIR / "orders.csv",
+    "products": DATA_DIR / "products.csv",
+    "users": DATA_DIR / "users.csv",
 }
 
-for name, df in dfs.items():
-    print(f"---{name}---")
-    print(f"Size (shape): {df.shape}")
-    print(df.head())
-    print("-" * 40)
+dfs = {}
+
+for table_name, csv_path in csv_paths.items():
+    dfs[table_name] = pd.read_csv(csv_path)
 
 conn = sqlite3.connect(DB_PATH)
 
 try:
+    for table_name, df in dfs.items():
+        df.to_sql(
+            table_name,
+            conn,
+            if_exists="replace",
+            index=False,
+        )
 
-    df_orders.to_sql("orders", conn, if_exists="replace", index=False)
-    df_products.to_sql("products", conn, if_exists="replace", index=False)
-    df_users.to_sql("users", conn, if_exists="replace", index=False)
-
-    query = """
+    sales_query = """
     SELECT
         p.product_name,
         SUM(o.quantity) AS total_quantity,
@@ -47,10 +43,8 @@ try:
     ORDER BY total_revenue DESC;
     """
 
-    result_df = pd.read_sql_query(query, conn)
+    result_df = pd.read_sql_query(sales_query, conn)
     print(result_df)
 
-
 finally:
-
     conn.close()
