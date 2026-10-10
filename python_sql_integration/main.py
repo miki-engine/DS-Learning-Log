@@ -14,10 +14,10 @@ csv_paths = {
     "users": DATA_DIR / "users.csv",
 }
 
-dfs = {}
-
-for table_name, csv_path in csv_paths.items():
-    dfs[table_name] = pd.read_csv(csv_path)
+dfs = {
+    table_name: pd.read_csv(csv_path)
+    for table_name, csv_path in csv_paths.items()
+}
 
 conn = sqlite3.connect(DB_PATH)
 
@@ -30,6 +30,8 @@ try:
             index=False,
         )
 
+    category = "Electronics"
+
     sales_query = """
     SELECT
         p.product_name,
@@ -38,12 +40,17 @@ try:
     FROM products AS p
     INNER JOIN orders AS o
         ON p.product_id = o.product_id
-    WHERE p.category = 'Electronics'
+    WHERE p.category = ?
     GROUP BY p.product_name
     ORDER BY total_revenue DESC;
     """
 
-    result_df = pd.read_sql_query(sales_query, conn)
+    result_df = pd.read_sql_query(
+        sales_query,
+        conn,
+        params=(category,),
+    )
+
     print(result_df)
 
 finally:
