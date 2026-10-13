@@ -210,3 +210,5 @@ __marimo__/
 scratch/
 
 python_sql_integration/ecommerce.db
+
+ab_test_analysis/ab_test.db
