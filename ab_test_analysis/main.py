@@ -14,9 +14,15 @@ CSV_PATHS = {
 
 
 def load_csv(csv_path: Path) -> pd.DataFrame:
+    """Load a CSV file into a pandas DataFrame.
+
+    Args:
+        csv_path: Path to the CSV file.
+
+    Returns:
+        DataFrame containing the CSV data.
     """
-    """
-    pass
+    return pd.read_csv(csv_path)
 
 
 def save_to_database(
@@ -24,9 +30,21 @@ def save_to_database(
     table_name: str,
     conn: sqlite3.Connection,
 ) -> None:
+    """Save a DataFrame to a table in an SQLite database.
+
+    Replace the existing table if it already exists.
+
+    Args:
+        df: DataFrame to save.
+        table_name: Name of the destination table.
+        conn: SQLite database connection.
     """
-    """
-    pass
+    df.to_sql(
+        table_name,
+        conn,
+        if_exists="replace",
+        index=False,
+    )
 
 
 def fetch_group_summary(conn: sqlite3.Connection) -> pd.DataFrame:
