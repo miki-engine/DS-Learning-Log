@@ -48,9 +48,31 @@ def save_to_database(
 
 
 def fetch_group_summary(conn: sqlite3.Connection) -> pd.DataFrame:
+    """Count unique users and purchasers in each A/B test group.
+
+    Args:
+        conn: SQLite database connection.
+
+    Returns:
+        DataFrame containing user and purchaser counts for each group.
     """
+    query = """
+        SELECT
+            u."group",
+            COUNT(DISTINCT u.user_id) AS users_count,
+            COUNT(
+                DISTINCT CASE
+                    WHEN l.purchased = 1 THEN u.user_id
+                    ELSE NULL
+                END
+            ) AS purchased_count
+        FROM ab_users AS u
+        INNER JOIN ab_logs AS l
+            ON u.user_id = l.user_id
+        GROUP BY u."group";
     """
-    pass
+
+    return pd.read_sql_query(query, conn)
 
 
 def add_purchase_rate(df: pd.DataFrame) -> pd.DataFrame:
