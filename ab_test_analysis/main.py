@@ -76,9 +76,18 @@ def fetch_group_summary(conn: sqlite3.Connection) -> pd.DataFrame:
 
 
 def add_purchase_rate(df: pd.DataFrame) -> pd.DataFrame:
+    """Add a purchase rate column to the group summary DataFrame.
+
+    Args:
+        df: DataFrame containing user and purchaser counts for each group.
+
+    Returns:
+        DataFrame with an additional "purchase_rate" column.
     """
-    """
-    pass
+    df = df.copy()
+    df["purchase_rate"] = df["purchased_count"] / df["users_count"]
+
+    return df
 
 
 def perform_purchase_rate_test(df: pd.DataFrame) -> tuple[float, float]:
