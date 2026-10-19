@@ -2,6 +2,7 @@ import sqlite3
 from pathlib import Path
 
 import pandas as pd
+from statsmodels.stats.proportion import proportions_ztest
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -91,9 +92,37 @@ def add_purchase_rate(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def perform_purchase_rate_test(df: pd.DataFrame) -> tuple[float, float]:
+    """Test whether the new design improves the purchase rate
+    compared to the old design.
+
+    H0: p_test <= p_control
+    H1: p_test > p_control
+
+    Args:
+        df: DataFrame containing user and purchaser counts and purchase rate
+            for each group.
+
+    Returns:
+        Tuple containing the z-statistic and p-value.
     """
-    """
-    pass
+    df = df.set_index("group")
+
+    user_counts = [
+        df.loc["Test", "users_count"],
+        df.loc["Control", "users_count"],
+    ]
+    purchase_counts = [
+        df.loc["Test", "purchased_count"],
+        df.loc["Control", "purchased_count"],
+    ]
+
+    z_stat, p_value = proportions_ztest(
+        count=purchase_counts,
+        nobs=user_counts,
+        alternative="larger",
+    )
+
+    return z_stat, p_value
 
 
 def print_analysis_report(
