@@ -143,18 +143,31 @@ def print_analysis_report(
     t_purchase_rate = float(df.loc["Test", "purchase_rate"])
     z_stat, p_value = test_result
     rate_difference_pp = (t_purchase_rate - c_purchase_rate) * 100
-    improvement_rate_pct = rate_difference_pp / c_purchase_rate
+    relative_change_pct = rate_difference_pp / c_purchase_rate
+
+    print("A/B Test Analysis Report")
+    print("-" * 40)
+
+    print("1. Purchase Rate Summary")
+    print(f"Control purchase rate: {c_purchase_rate:.2%}")
+    print(f"Test purchase rate: {t_purchase_rate:.2%}")
+    print(
+        "Purchase rate difference: "
+        f"{rate_difference_pp:+.2f} percentage points"
+    )
+    print(f"Relative change: {relative_change_pct:+.2f}%")
+
+    print("-" * 40)
+
+    print("2. Statistical Test")
 
     print(f"Significance level (alpha): {ALPHA:.2f}")
     print(f"Z-statistic: {z_stat:.4f}")
     print(f"p-value: {p_value:.4f}")
 
-    print(f"Control purchase rate: {c_purchase_rate:.2%}")
-    print(f"Test purchase rate: {t_purchase_rate:.2%}")
-    print(f"Purchase rate difference: {rate_difference_pp:+.2f} percentage points")
-    print(f"Relative improvement: {improvement_rate_pct:+.2f}%")
+    print("-" * 40)
 
-    print("Statistical interpretation")
+    print("3. Statistical Interpretation")
 
     if p_value <= ALPHA:
         print(
@@ -164,7 +177,7 @@ def print_analysis_report(
 
     elif t_purchase_rate > c_purchase_rate:
         print(
-            "The purchase rate was higher in the test group than "
+            "The purchase rate was higher in the Test group than "
             "in the Control group. However, there is insufficient "
             "evidence to conclude that the new design improves the "
             "purchase rate."
@@ -178,48 +191,58 @@ def print_analysis_report(
 
     print("-" * 40)
 
-    print("Practical significance")
+    print("4. Practical Significance")
 
     if rate_difference_pp > 0:
-        print("There is potential business value.")
-        print(
-            "The practical value cannot be determined "
-            "because implementation costs are unknown. "
-        )
+        print("The observed increase may have business value.")
 
     elif rate_difference_pp < 0:
-        print("There is a possibility of business disadvantages.")
-        print(
-            "The practical value cannot be determined "
-            "because implementation costs are unknown. "
-        )
-        
+        print("The observed decrease may have a negative business impact.")
 
     else:
-        print("No changes were observed.")
-        print(
-            "The practical value cannot be determined "
-            "because implementation costs are unknown. "
-        )
-        
+        print("No difference in purchase rates was observed.")
+
+    print(
+        "The practical significance cannot be determined "
+        "because implementation costs and expected profits are unknown, "
+        "and the true effect of the new design remains uncertain."
+    )
 
     print("-" * 40)
 
-    print("Business recommendation")
+    print("5. Business Recommendation")
 
-    print(
-        "The observed purchase rate was higher in the Test group. "
-        "However, there is insufficient evidence to conclude that "
-        "the new design improves the purchase rate. Implementation "
-        "costs and potential profits are also unknown. "
-        "We should not roll out the new design yet. "
-        "Before conducting another A/B test, we should determine the "
-        "minimum detectable effect and calculate the required sample "
-        "size through a power analysis. We should also evaluate "
-        "potential revenue gains and implementation costs."
-    )
+    if p_value <= ALPHA:
+        print(
+            "There is statistically significant evidence that "
+            "the new design improves the purchase rate. "
+            "If the expected benefits outweigh the implementation "
+            "costs, we should consider rolling out the new design."
+        )
 
-    
+    elif rate_difference_pp > 0:
+        print(
+            "The observed purchase rate was higher in the Test group. "
+            "However, there is insufficient evidence to conclude that "
+            "the new design improves the purchase rate. Implementation "
+            "costs and potential profits are also unknown. "
+            "We should not roll out the new design yet. "
+            "Before conducting another A/B test, we should determine the "
+            "minimum detectable effect and calculate the required sample "
+            "size through a power analysis. We should also evaluate "
+            "potential revenue gains and implementation costs."
+        )
+
+    else:
+        print(
+            "No improvement in the purchase rate was observed, "
+            "and there is no statistically significant evidence "
+            "that the new design improves the purchase rate. "
+            "We should not roll out the new design based on "
+            "the current results. The design should be reviewed "
+            "before further testing."
+        )
+
 
 def main() -> None:
     """Run AB test analysis workflow."""
