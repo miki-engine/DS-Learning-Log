@@ -149,40 +149,74 @@ def print_analysis_report(
     print(f"Z-statistic: {z_stat:.4f}")
     print(f"p-value: {p_value:.4f}")
 
-    if p_value < ALPHA:
-        print(
-            "The Test group's purchase rate is statistically "
-            "significantly higher than the Control group's."
-        )
-
-    else:
-        print(
-            "There is insufficient evidence to conclude that "
-            "the Test group's purchase rate is higher than "
-            "the Control group's."
-        )
-
     print(f"Control purchase rate: {c_purchase_rate:.2%}")
     print(f"Test purchase rate: {t_purchase_rate:.2%}")
     print(f"Purchase rate difference: {rate_difference_pp:+.2f} percentage points")
     print(f"Relative improvement: {improvement_rate_pct:+.2f}%")
 
-    print(
-        "The purchase rate was higher in the Test group than "
-        "in the Control group. "
-        "The observed improvement may have practical significance. However, "
-        "the business impact is unknown because implementation costs and "
-        "potential profits are unknown."
-    )
+    print("Statistical interpretation")
 
-    print("Final business conclusion:")
+    if p_value <= ALPHA:
+        print(
+            "The Test group's purchase rate is statistically "
+            "significantly higher than the Control group's."
+        )
+
+    elif t_purchase_rate > c_purchase_rate:
+        print(
+            "The purchase rate was higher in the test group than "
+            "in the Control group. However, there is insufficient "
+            "evidence to conclude that the new design improves the "
+            "purchase rate."
+        )
+
+    else:
+        print(
+            "The Test group's observed purchase rate was not "
+            "higher than the Control group's."
+        )
+
+    print("-" * 40)
+
+    print("Practical significance")
+
+    if rate_difference_pp > 0:
+        print("There is potential business value.")
+        print(
+            "The practical value cannot be determined "
+            "because implementation costs are unknown. "
+        )
+
+    elif rate_difference_pp < 0:
+        print("There is a possibility of business disadvantages.")
+        print(
+            "The practical value cannot be determined "
+            "because implementation costs are unknown. "
+        )
+        
+
+    else:
+        print("No changes were observed.")
+        print(
+            "The practical value cannot be determined "
+            "because implementation costs are unknown. "
+        )
+        
+
+    print("-" * 40)
+
+    print("Business recommendation")
+
     print(
         "The observed purchase rate was higher in the Test group. "
         "However, there is insufficient evidence to conclude that "
         "the new design improves the purchase rate. Implementation "
         "costs and potential profits are also unknown. "
         "We should not roll out the new design yet. "
-        "Further A/B testing is needed."
+        "Before conducting another A/B test, we should determine the "
+        "minimum detectable effect and calculate the required sample "
+        "size through a power analysis. We should also evaluate "
+        "potential revenue gains and implementation costs."
     )
 
     
