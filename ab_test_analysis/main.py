@@ -104,6 +104,9 @@ def perform_purchase_rate_test(df: pd.DataFrame) -> tuple[float, float]:
         df: DataFrame containing user and purchaser counts and purchase rate
             for each group.
 
+    Raises:
+        ValueError: If all users have the same purchase outcome.
+
     Returns:
         Tuple containing the z-statistic and p-value.
     """
@@ -117,6 +120,19 @@ def perform_purchase_rate_test(df: pd.DataFrame) -> tuple[float, float]:
         df.loc["Test", "purchased_count"],
         df.loc["Control", "purchased_count"],
     ]
+
+    total_purchases = sum(purchase_counts)
+    total_users = sum(user_counts)
+
+    if total_purchases == 0:
+        raise ValueError(
+            "Cannot perform the z-test: no purchases were observed."
+        )
+
+    if total_purchases == total_users:
+        raise ValueError(
+            "Cannot perform the z-test: no non-purchasers were observed."
+        )
 
     z_stat, p_value = proportions_ztest(
         count=purchase_counts,
@@ -143,7 +159,11 @@ def print_analysis_report(
     t_purchase_rate = float(df.loc["Test", "purchase_rate"])
     z_stat, p_value = test_result
     rate_difference_pp = (t_purchase_rate - c_purchase_rate) * 100
-    relative_change_pct = rate_difference_pp / c_purchase_rate
+
+    if c_purchase_rate == 0:
+        relative_change_pct = None
+    else:
+        relative_change_pct = rate_difference_pp / c_purchase_rate
 
     print("A/B Test Analysis Report")
     print("-" * 40)
@@ -155,7 +175,11 @@ def print_analysis_report(
         "Purchase rate difference: "
         f"{rate_difference_pp:+.2f} percentage points"
     )
-    print(f"Relative change: {relative_change_pct:+.2f}%")
+
+    if relative_change_pct is None:
+        print("Relative change: N/A (Control purchase rate is 0%)")
+    else:
+        print(f"Relative change: {relative_change_pct:+.2f}%")
 
     print("-" * 40)
 
