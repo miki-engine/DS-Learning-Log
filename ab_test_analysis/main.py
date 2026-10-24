@@ -158,12 +158,14 @@ def print_analysis_report(
     c_purchase_rate = float(df.loc["Control", "purchase_rate"])
     t_purchase_rate = float(df.loc["Test", "purchase_rate"])
     z_stat, p_value = test_result
-    rate_difference_pp = (t_purchase_rate - c_purchase_rate) * 100
+
+    rate_difference = t_purchase_rate - c_purchase_rate
+    rate_difference_pp = rate_difference * 100
 
     if c_purchase_rate == 0:
         relative_change_pct = None
     else:
-        relative_change_pct = rate_difference_pp / c_purchase_rate
+        relative_change_pct = (rate_difference / c_purchase_rate) * 100
 
     print("A/B Test Analysis Report")
     print("-" * 40)
