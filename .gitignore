@@ -212,3 +212,5 @@ scratch/
 python_sql_integration/ecommerce.db
 
 ab_test_analysis/ab_test.db
+
+funnel_analysis/funnel_analysis.db
