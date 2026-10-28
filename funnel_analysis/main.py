@@ -8,8 +8,12 @@ import seaborn as sns
 
 def load_csv(csv_path: Path) -> pd.DataFrame:
     """Load a CSV file into a DataFrame.
+    Args:
+        csv_path: Path to the CSV file.
+    Returns:
+        DataFrame containing the CSV data.
     """
-    pass
+    return pd.read_csv(csv_path)
 
 
 def save_to_database(
