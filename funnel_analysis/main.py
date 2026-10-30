@@ -67,13 +67,17 @@ def visualize(df: pd.DataFrame) -> plt.Figure:
     pass
 
 
-def save_png(
-        fig: plt.Figure,
-        output_path: Path,
-) -> None:
+def save_png(fig: plt.Figure, output_path: Path) -> None:
     """Save the figure as a PNG image.
+
+    Create the destination directory if it does not exist.
+
+    Args:
+        fig: Figure containing the funnel charts.
+        output_path: Path where the PNG file will be saved.
     """
-    pass
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path)
 
 
 def print_analysis_report(df: pd.DataFrame) -> None:
