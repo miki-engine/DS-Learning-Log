@@ -5,6 +5,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
+DB_PATH = BASE_DIR / "funnel_analysis.db"
+
+CSV_PATHS = {
+    "users": DATA_DIR / "users.csv",
+    "events": DATA_DIR / "events.csv",
+}
+
 
 def load_csv(csv_path: Path) -> pd.DataFrame:
     """Load a CSV file into a DataFrame.
@@ -40,8 +49,32 @@ def save_to_database(
 
 def fetch_overall_funnel(conn: sqlite3.Connection) -> pd.DataFrame:
     """Extract the number of unique users who reached each stage.
+    
+    Args:
+        conn: SQLite database connection.
+
+    Returns:
+        DataFrame containing unique user counts for each funnel stage.
     """
-    pass
+    query = """
+        SELECT
+            e.event_type,
+            COUNT(DISTINCT u.user_id) AS funnel_count
+        FROM users AS u
+        INNER JOIN events AS e
+            ON u.user_id = e.user_id
+        GROUP BY e.event_type
+        ORDER BY
+            CASE e.event_type
+                WHEN 'view_item' THEN 1
+                WHEN 'add_to_cart' THEN 2
+                WHEN 'begin_checkout' THEN 3
+                WHEN 'purchase' THEN 4
+                ELSE 5
+            END;
+    """
+
+    return pd.read_sql_query(query, conn)
 
 
 def fetch_segment_funnel(
@@ -88,7 +121,22 @@ def print_analysis_report(df: pd.DataFrame) -> None:
 
 def main() -> None:
     """Run funnel analysis workflow."""
-    pass
+    conn = sqlite3.connect(DB_PATH)
+
+    try:
+        for table_name, csv_path in CSV_PATHS.items():
+            save_to_database(
+                load_csv(csv_path),
+                table_name,
+                conn,
+            )
+
+        df = fetch_overall_funnel(conn)
+
+    finally:
+        conn.close()
+
+    print(df)
 
 
 if __name__ == "__main__":
