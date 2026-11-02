@@ -83,8 +83,46 @@ def fetch_segment_funnel(
 ) -> pd.DataFrame:
     """Extract the number of unique users who reached each stage
     for each segment.
+
+    Args:
+        conn: SQLite database connection.
+        segment: Column name used to group users.
+
+    Raises:
+        ValueError: If the specified segment is not allowed.
+
+    Returns:
+        DataFrame containing unique user counts for each funnel stage,
+        grouped by the specified segment.
     """
-    pass
+    allowed_segments = ["device", "traffic_source"]
+
+    if segment not in allowed_segments:
+        raise ValueError(f"Invalid segment: {segment}")
+    
+    query = f"""
+        SELECT
+            u.{segment},
+            e.event_type,
+            COUNT(DISTINCT u.user_id) AS funnel_count
+        FROM users AS u
+        INNER JOIN events AS e
+            ON u.user_id = e.user_id
+        GROUP BY
+            u.{segment},
+            e.event_type
+        ORDER BY
+            u.{segment},
+            CASE e.event_type
+                WHEN 'view_item' THEN 1
+                WHEN 'add_to_cart' THEN 2
+                WHEN 'begin_checkout' THEN 3
+                WHEN 'purchase' THEN 4
+                ELSE 5
+            END;
+    """
+
+    return pd.read_sql_query(query, conn)
 
 
 def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
@@ -132,11 +170,14 @@ def main() -> None:
             )
 
         df = fetch_overall_funnel(conn)
-
+        device_df = fetch_segment_funnel(conn, "device")
+        traffic_df = fetch_segment_funnel(conn, "traffic_source")
     finally:
         conn.close()
 
     print(df)
+    print(device_df)
+    print(traffic_df)
 
 
 if __name__ == "__main__":
