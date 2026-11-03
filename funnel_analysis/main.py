@@ -125,11 +125,34 @@ def fetch_segment_funnel(
     return pd.read_sql_query(query, conn)
 
 
-def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
+def calculate_indicators(
+        df: pd.DataFrame,
+        segment: str | None = None,
+    ) -> pd.DataFrame:
     """Calculate overall conversion rate, step-to-step conversion rate,
     and drop-off rate.
+
+    Args:
+        df: DataFrame containing funnel user counts.
+        segment: Column name used for grouping, or None for overall data.
+
+    Returns:
+        DataFrame with additional indicator columns.
     """
-    pass
+    df = df.copy()
+
+    if segment is not None:
+        initial_count = df.groupby(segment)["funnel_count"].transform("first")
+        prev_count = df.groupby(segment)["funnel_count"].shift(1)
+    else:
+        initial_count = df["funnel_count"].iloc[0]
+        prev_count = df["funnel_count"].shift(1)
+
+    df["overall_cvr"] = df["funnel_count"] / initial_count
+    df["step_cvr"] = df["funnel_count"] / prev_count
+    df["drop_off_rate"] = 1.0 - df["step_cvr"]
+
+    return df
 
 
 def visualize(df: pd.DataFrame) -> plt.Figure:
@@ -174,6 +197,10 @@ def main() -> None:
         traffic_df = fetch_segment_funnel(conn, "traffic_source")
     finally:
         conn.close()
+
+    df = calculate_indicators(df)
+    device_df = calculate_indicators(device_df, segment="device")
+    traffic_df = calculate_indicators(traffic_df, segment="traffic_source")
 
     print(df)
     print(device_df)
