@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import PercentFormatter
 import seaborn as sns
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -13,6 +14,9 @@ CSV_PATHS = {
     "users": DATA_DIR / "users.csv",
     "events": DATA_DIR / "events.csv",
 }
+
+OUTPUT_DIR = BASE_DIR / "output"
+OUTPUT_PATH_OVERALL = OUTPUT_DIR / "overall_funnel.png"
 
 
 def load_csv(csv_path: Path) -> pd.DataFrame:
@@ -155,8 +159,60 @@ def calculate_indicators(
     return df
 
 
-def visualize(df: pd.DataFrame) -> plt.Figure:
+def visualize_overall(df: pd.DataFrame) -> plt.Figure:
     """Create a figure containing funnel charts.
+
+    Args:
+        df: DataFrame containing funnel user counts and indicator columns.
+
+    Returns:
+        Figure showing funnel user counts and step-to-step drop-off rates.
+    """
+    df = df.copy()
+
+    fig, axes = plt.subplots(
+        nrows=2,
+        ncols=1,
+        figsize=(12, 8),
+    )
+
+    sns.barplot(
+        data=df,
+        x="funnel_count",
+        y="event_type",
+        errorbar=None,
+        ax=axes[0],
+    )
+    axes[0].set_title("Funnel Chart")
+    axes[0].set_xlabel("Funnel Count")
+    axes[0].set_ylabel("Event Type")
+
+    df["transition"] = df["event_type"].shift(1) + " → " + df["event_type"]
+    dropoff_df = df.dropna(subset=["drop_off_rate"])
+
+    sns.barplot(
+        data=dropoff_df,
+        x="transition",
+        y="drop_off_rate",
+        errorbar=None,
+        ax=axes[1],
+    )
+    axes[1].set_ylim(0, 1.0)
+    axes[1].yaxis.set_major_formatter(PercentFormatter(xmax=1.0))
+    axes[1].set_title("Drop-off Rate between Funnel Steps")
+    axes[1].set_xlabel("Transition")
+    axes[1].set_ylabel("Drop-off Rate (%)")
+
+    fig.tight_layout()
+
+    return fig
+
+
+def visualize_segment(
+        df: pd.DataFrame,
+        segment: str,
+) -> plt.Figure:
+    """
     """
     pass
 
@@ -202,9 +258,11 @@ def main() -> None:
     device_df = calculate_indicators(device_df, segment="device")
     traffic_df = calculate_indicators(traffic_df, segment="traffic_source")
 
-    print(df)
-    print(device_df)
-    print(traffic_df)
+    fig_overall = visualize_overall(df)
+    save_png(fig_overall, OUTPUT_PATH_OVERALL)
+
+    plt.show()
+    plt.close(fig_overall)
 
 
 if __name__ == "__main__":
