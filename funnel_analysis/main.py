@@ -17,6 +17,8 @@ CSV_PATHS = {
 
 OUTPUT_DIR = BASE_DIR / "output"
 OUTPUT_PATH_OVERALL = OUTPUT_DIR / "overall_funnel.png"
+OUTPUT_PATH_DEVICE = OUTPUT_DIR / "device_funnel.png"
+OUTPUT_PATH_TRAFFIC = OUTPUT_DIR / "traffic_source_funnel.png"
 
 
 def load_csv(csv_path: Path) -> pd.DataFrame:
@@ -212,9 +214,43 @@ def visualize_segment(
         df: pd.DataFrame,
         segment: str,
 ) -> plt.Figure:
+    """Create a figure showing funnel drop-off rates by segment.
+
+    Args:
+        df: DataFrame containing funnel user counts and indicator columns by segments.
+        segment: Column name used for grouping.
+
+    Returns:
+        Figure showing step-to-step drop-off rates by segments.
     """
-    """
-    pass
+    df = df.copy()
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    df["transition"] = (
+        df.groupby(segment)["event_type"].shift(1)
+        + " → "
+        + df["event_type"]
+    )
+    dropoff_df = df.dropna(subset=["drop_off_rate"])
+
+    sns.barplot(
+        data=dropoff_df,
+        x="transition",
+        y="drop_off_rate",
+        hue=segment,
+        errorbar=None,
+        ax=ax,
+    )
+
+    ax.set_title("Drop-off Rate between Funnel Steps by Segment")
+    ax.set_ylim(0, 1.0)
+    ax.yaxis.set_major_formatter(PercentFormatter(xmax=1.0))
+    ax.set_xlabel("Transition")
+    ax.set_ylabel("Drop-off Rate (%)")
+
+    fig.tight_layout()
+
+    return fig
 
 
 def save_png(fig: plt.Figure, output_path: Path) -> None:
@@ -261,8 +297,15 @@ def main() -> None:
     fig_overall = visualize_overall(df)
     save_png(fig_overall, OUTPUT_PATH_OVERALL)
 
+    fig_device = visualize_segment(device_df, "device")
+    fig_traffic = visualize_segment(traffic_df, "traffic_source")
+    save_png(fig_device, OUTPUT_PATH_DEVICE)
+    save_png(fig_traffic, OUTPUT_PATH_TRAFFIC)
+
     plt.show()
     plt.close(fig_overall)
+    plt.close(fig_device)
+    plt.close(fig_traffic)
 
 
 if __name__ == "__main__":
