@@ -189,7 +189,11 @@ def visualize_overall(df: pd.DataFrame) -> plt.Figure:
     axes[0].set_xlabel("Funnel Count")
     axes[0].set_ylabel("Event Type")
 
-    df["transition"] = df["event_type"].shift(1) + " → " + df["event_type"]
+    df["transition"] = (
+        df["event_type"].shift(1)
+        + " → "
+        + df["event_type"]
+    )
     dropoff_df = df.dropna(subset=["drop_off_rate"])
 
     sns.barplot(
@@ -266,8 +270,44 @@ def save_png(fig: plt.Figure, output_path: Path) -> None:
     fig.savefig(output_path)
 
 
-def print_analysis_report(df: pd.DataFrame) -> None:
-    """Print the funnel analysis report.
+def print_overall_report(df: pd.DataFrame) -> None:
+    """Print the overall funnel analysis report.
+
+    Args:
+        df: DataFrame containing funnel user counts and indicator columns.
+    """
+    df = df.copy()
+
+    df["transition"] = (
+        df["event_type"].shift(1)
+        + " → "
+        + df["event_type"]
+    )
+
+    final_cvr = df.loc[
+        df["event_type"] == "purchase",
+        "overall_cvr"
+    ].iloc[0]
+
+    max_drop_point = df["drop_off_rate"].idxmax()
+    max_drop_rate = df.loc[max_drop_point, "drop_off_rate"]
+    max_rate_transition = df.loc[max_drop_point, "transition"]
+
+    df["drop_off_number"] = df["funnel_count"].shift(1) - df["funnel_count"]
+    max_drop_number_point = df["drop_off_number"].idxmax()
+    max_drop_number = df.loc[max_drop_number_point, "drop_off_number"]
+    max_transition = df.loc[max_drop_number_point, "transition"]
+
+    print(f"Final Purchase Conversion Rate: {final_cvr:.2%}")
+    print(f"Maximum Drop-off: {max_transition} ({max_drop_number:.0f} users)")
+    print(f"Maximum Drop-off Rate: {max_rate_transition} {max_drop_rate:.2%}")
+
+
+def print_segment_report(
+        df: pd.DataFrame,
+        segment: str,
+) -> None:
+    """
     """
     pass
 
@@ -293,6 +333,8 @@ def main() -> None:
     df = calculate_indicators(df)
     device_df = calculate_indicators(device_df, segment="device")
     traffic_df = calculate_indicators(traffic_df, segment="traffic_source")
+
+    print_overall_report(df)
 
     fig_overall = visualize_overall(df)
     save_png(fig_overall, OUTPUT_PATH_OVERALL)
