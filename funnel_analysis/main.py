@@ -246,7 +246,11 @@ def visualize_segment(
         ax=ax,
     )
 
-    ax.set_title("Drop-off Rate between Funnel Steps by Segment")
+    segment_label = segment.replace("_", " ").title()
+
+    ax.set_title(f"Drop-off Rate between Funnel Steps by {segment_label}")
+    ax.legend(title=segment_label)
+
     ax.set_ylim(0, 1.0)
     ax.yaxis.set_major_formatter(PercentFormatter(xmax=1.0))
     ax.set_xlabel("Transition")
