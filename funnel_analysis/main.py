@@ -307,9 +307,43 @@ def print_segment_report(
         df: pd.DataFrame,
         segment: str,
 ) -> None:
+    """Print the funnel analysis report by segments.
+
+    Args:
+        df: DataFrame containing funnel user counts and indicator columns by segments.
+        segment: Column name used for grouping.
     """
-    """
-    pass
+    for segment_value, group_df in df.groupby(segment):
+        segment_df = group_df.copy()
+
+        segment_df["transition"] = (
+            segment_df["event_type"].shift(1)
+            + " → "
+            + segment_df["event_type"]
+        )
+
+        final_cvr = segment_df.loc[
+            segment_df["event_type"] == "purchase",
+            "overall_cvr"
+        ].iloc[0]
+
+        max_drop_point = segment_df["drop_off_rate"].idxmax()
+        max_drop_rate = segment_df.loc[max_drop_point, "drop_off_rate"]
+        max_rate_transition = segment_df.loc[max_drop_point, "transition"]
+
+        segment_df["drop_off_number"] = (
+            segment_df["funnel_count"].shift(1)
+            - segment_df["funnel_count"]
+        )
+        max_drop_number_point = segment_df["drop_off_number"].idxmax()
+        max_drop_number = segment_df.loc[max_drop_number_point, "drop_off_number"]
+        max_transition = segment_df.loc[max_drop_number_point, "transition"]
+
+        print(f"=== {segment_value} ===")
+
+        print(f"Final Purchase Conversion Rate: {final_cvr:.2%}")
+        print(f"Maximum Drop-off: {max_transition} ({max_drop_number:.0f} users)")
+        print(f"Maximum Drop-off Rate: {max_rate_transition} {max_drop_rate:.2%}")
 
 
 def main() -> None:
@@ -335,6 +369,8 @@ def main() -> None:
     traffic_df = calculate_indicators(traffic_df, segment="traffic_source")
 
     print_overall_report(df)
+    print_segment_report(device_df, segment="device")
+    print_segment_report(traffic_df, segment="traffic_source")
 
     fig_overall = visualize_overall(df)
     save_png(fig_overall, OUTPUT_PATH_OVERALL)
