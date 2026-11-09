@@ -185,6 +185,13 @@ def visualize_overall(df: pd.DataFrame) -> plt.Figure:
         errorbar=None,
         ax=axes[0],
     )
+    axes[0].bar_label(
+        axes[0].containers[0],
+        fmt="{:,.0f}",
+        padding=3,
+        fontsize=10,
+    )
+    axes[0].margins(x=0.15)
     axes[0].set_title("Funnel Chart")
     axes[0].set_xlabel("Funnel Count")
     axes[0].set_ylabel("Event Type")
