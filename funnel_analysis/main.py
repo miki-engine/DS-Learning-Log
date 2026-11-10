@@ -210,6 +210,12 @@ def visualize_overall(df: pd.DataFrame) -> plt.Figure:
         errorbar=None,
         ax=axes[1],
     )
+    axes[1].bar_label(
+        axes[1].containers[0],
+        fmt=lambda x: f"{x*100:.2f}%",
+        padding=3,
+        fontsize=10,
+    )
     axes[1].set_ylim(0, 1.0)
     axes[1].yaxis.set_major_formatter(PercentFormatter(xmax=1.0))
     axes[1].set_title("Drop-off Rate between Funnel Steps")
