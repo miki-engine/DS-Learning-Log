@@ -258,6 +258,13 @@ def visualize_segment(
         errorbar=None,
         ax=ax,
     )
+    for container in ax.containers:
+        ax.bar_label(
+            container,
+            fmt=lambda x: f"{x*100:.2f}%",
+            padding=3,
+            fontsize=10,
+        )
 
     segment_label = segment.replace("_", " ").title()
 
