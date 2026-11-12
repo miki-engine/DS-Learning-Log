@@ -177,17 +177,15 @@ def add_transition_column(
     df = df.copy()
 
     if segment is not None:
-        df["transition"] = (
-            df.groupby(segment)["event_type"].shift(1)
-            + " → "
-            + df["event_type"]
-        )
+        previous_event = df.groupby(segment)["event_type"].shift(1)
     else:
-        df["transition"] = (
-            df["event_type"].shift(1)
-            + " → "
-            + df["event_type"]
-        )
+        previous_event = df["event_type"].shift(1)
+
+    df["transition"] = (
+        previous_event
+        + " → "
+        + df["event_type"]
+    )
 
     return df
         
