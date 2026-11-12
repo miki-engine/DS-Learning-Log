@@ -161,6 +161,39 @@ def calculate_indicators(
     return df
 
 
+def add_transition_column(
+    df: pd.DataFrame,
+    segment: str | None = None,
+) -> pd.DataFrame:
+    """Add transition column to DataFrame.
+
+    Args:
+        df: DataFrame containing funnel user counts and indicator columns.
+        segment: Column name used for grouping, or None for overall data.
+
+    Returns:
+        DataFrame with an additional transition column.
+    """
+    df = df.copy()
+
+    if segment is not None:
+        df["transition"] = (
+            df.groupby(segment)["event_type"].shift(1)
+            + " → "
+            + df["event_type"]
+        )
+    else:
+        df["transition"] = (
+            df["event_type"].shift(1)
+            + " → "
+            + df["event_type"]
+        )
+
+    return df
+        
+
+
+
 def visualize_overall(df: pd.DataFrame) -> plt.Figure:
     """Create a figure containing funnel charts.
 
@@ -170,8 +203,6 @@ def visualize_overall(df: pd.DataFrame) -> plt.Figure:
     Returns:
         Figure showing funnel user counts and step-to-step drop-off rates.
     """
-    df = df.copy()
-
     fig, axes = plt.subplots(
         nrows=2,
         ncols=1,
@@ -196,11 +227,6 @@ def visualize_overall(df: pd.DataFrame) -> plt.Figure:
     axes[0].set_xlabel("Funnel Count")
     axes[0].set_ylabel("Event Type")
 
-    df["transition"] = (
-        df["event_type"].shift(1)
-        + " → "
-        + df["event_type"]
-    )
     dropoff_df = df.dropna(subset=["drop_off_rate"])
 
     sns.barplot(
@@ -240,14 +266,8 @@ def visualize_segment(
     Returns:
         Figure showing step-to-step drop-off rates by segments.
     """
-    df = df.copy()
     fig, ax = plt.subplots(figsize=(8, 6))
 
-    df["transition"] = (
-        df.groupby(segment)["event_type"].shift(1)
-        + " → "
-        + df["event_type"]
-    )
     dropoff_df = df.dropna(subset=["drop_off_rate"])
 
     sns.barplot(
@@ -302,12 +322,6 @@ def print_overall_report(df: pd.DataFrame) -> None:
     """
     df = df.copy()
 
-    df["transition"] = (
-        df["event_type"].shift(1)
-        + " → "
-        + df["event_type"]
-    )
-
     final_cvr = df.loc[
         df["event_type"] == "purchase",
         "overall_cvr"
@@ -339,12 +353,6 @@ def print_segment_report(
     """
     for segment_value, group_df in df.groupby(segment):
         segment_df = group_df.copy()
-
-        segment_df["transition"] = (
-            segment_df["event_type"].shift(1)
-            + " → "
-            + segment_df["event_type"]
-        )
 
         final_cvr = segment_df.loc[
             segment_df["event_type"] == "purchase",
@@ -391,6 +399,10 @@ def main() -> None:
     df = calculate_indicators(df)
     device_df = calculate_indicators(device_df, segment="device")
     traffic_df = calculate_indicators(traffic_df, segment="traffic_source")
+
+    df = add_transition_column(df)
+    device_df = add_transition_column(device_df, segment="device")
+    traffic_df = add_transition_column(traffic_df, segment="traffic_source")
 
     print_overall_report(df)
     print_segment_report(device_df, segment="device")
