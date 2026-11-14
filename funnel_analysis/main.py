@@ -188,8 +188,32 @@ def add_transition_column(
     )
 
     return df
-        
 
+
+def add_drop_off_number_column(
+    df: pd.DataFrame,
+    segment: str | None = None,
+) -> pd.DataFrame:
+    """Add drop-off column to DataFrame.
+
+    Args:
+        df: DataFrame containing funnel user counts, indicator columns,
+        and transition column.
+        segment: Column name used for grouping, or None for overall data.
+
+    Returns:
+        DataFrame with an additional drop-off column.
+    """
+    df = df.copy()
+
+    if segment is not None:
+        prev_count = df.groupby(segment)["funnel_count"].shift(1)
+    else:
+        prev_count = df["funnel_count"].shift(1)
+
+    df["drop_off_number"] = prev_count - df["funnel_count"]
+
+    return df
 
 
 def visualize_overall(df: pd.DataFrame) -> plt.Figure:
@@ -318,8 +342,6 @@ def print_overall_report(df: pd.DataFrame) -> None:
     Args:
         df: DataFrame containing funnel user counts and indicator columns.
     """
-    df = df.copy()
-
     final_cvr = df.loc[
         df["event_type"] == "purchase",
         "overall_cvr"
@@ -329,7 +351,6 @@ def print_overall_report(df: pd.DataFrame) -> None:
     max_drop_rate = df.loc[max_drop_point, "drop_off_rate"]
     max_rate_transition = df.loc[max_drop_point, "transition"]
 
-    df["drop_off_number"] = df["funnel_count"].shift(1) - df["funnel_count"]
     max_drop_number_point = df["drop_off_number"].idxmax()
     max_drop_number = df.loc[max_drop_number_point, "drop_off_number"]
     max_transition = df.loc[max_drop_number_point, "transition"]
@@ -349,9 +370,7 @@ def print_segment_report(
         df: DataFrame containing funnel user counts and indicator columns by segments.
         segment: Column name used for grouping.
     """
-    for segment_value, group_df in df.groupby(segment):
-        segment_df = group_df.copy()
-
+    for segment_value, segment_df in df.groupby(segment):
         final_cvr = segment_df.loc[
             segment_df["event_type"] == "purchase",
             "overall_cvr"
@@ -361,10 +380,6 @@ def print_segment_report(
         max_drop_rate = segment_df.loc[max_drop_point, "drop_off_rate"]
         max_rate_transition = segment_df.loc[max_drop_point, "transition"]
 
-        segment_df["drop_off_number"] = (
-            segment_df["funnel_count"].shift(1)
-            - segment_df["funnel_count"]
-        )
         max_drop_number_point = segment_df["drop_off_number"].idxmax()
         max_drop_number = segment_df.loc[max_drop_number_point, "drop_off_number"]
         max_transition = segment_df.loc[max_drop_number_point, "transition"]
@@ -401,6 +416,10 @@ def main() -> None:
     df = add_transition_column(df)
     device_df = add_transition_column(device_df, segment="device")
     traffic_df = add_transition_column(traffic_df, segment="traffic_source")
+
+    df = add_drop_off_number_column(df)
+    device_df = add_drop_off_number_column(device_df, segment="device")
+    traffic_df = add_drop_off_number_column(traffic_df, segment="traffic_source")
 
     print_overall_report(df)
     print_segment_report(device_df, segment="device")
