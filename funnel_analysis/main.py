@@ -336,11 +336,17 @@ def save_png(fig: plt.Figure, output_path: Path) -> None:
     fig.savefig(output_path)
 
 
-def print_overall_report(df: pd.DataFrame) -> None:
-    """Print the overall funnel analysis report.
-
+def extract_report_metrics(
+    df: pd.DataFrame,
+) -> dict[str, int | float | str]:
+    """Extract metrics for the funnel analysis report.
+    
     Args:
         df: DataFrame containing funnel user counts and indicator columns.
+        
+    Returns:
+        Dictionary containing the final purchase CVR, maximum drop-off
+        count and its transition, and maximum drop-off rate and its transition.
     """
     final_cvr = df.loc[
         df["event_type"] == "purchase",
@@ -355,9 +361,48 @@ def print_overall_report(df: pd.DataFrame) -> None:
     max_drop_number = df.loc[max_drop_number_point, "drop_off_number"]
     max_transition = df.loc[max_drop_number_point, "transition"]
 
-    print(f"Final Purchase Conversion Rate: {final_cvr:.2%}")
-    print(f"Maximum Drop-off: {max_transition} ({max_drop_number:.0f} users)")
-    print(f"Maximum Drop-off Rate: {max_rate_transition} {max_drop_rate:.2%}")
+    report_metrics = {
+        "final_cvr": final_cvr,
+        "max_dropoff_transition": max_transition,
+        "max_dropoff_number": max_drop_number,
+        "max_dropoff_rate_transition": max_rate_transition,
+        "max_dropoff_rate": max_drop_rate,
+    }
+
+    return report_metrics
+
+
+def print_report_metrics(metrics: dict[str, int | float | str]) -> None:
+    """Print report metrics.
+    
+    Args:
+        metrics: Dictionary containing the final purchase CVR, maximum drop-off
+        count and its transition, and maximum drop-off rate and its transition.
+    """
+    print(
+        f"Final Purchase Conversion Rate: {metrics['final_cvr']:.2%}"
+    )
+
+    print(
+        f"Maximum Drop-off: {metrics['max_dropoff_transition']} "
+        f"({metrics['max_dropoff_number']:.0f} users)"
+    )
+
+    print(
+        f"Maximum Drop-off Rate: {metrics['max_dropoff_rate_transition']} "
+        f"{metrics['max_dropoff_rate']:.2%}"
+    )
+
+
+def print_overall_report(df: pd.DataFrame) -> None:
+    """Print the overall funnel analysis report.
+
+    Args:
+        df: DataFrame containing funnel user counts and indicator columns.
+    """
+    metrics = extract_report_metrics(df)
+
+    print_report_metrics(metrics)
 
 
 def print_segment_report(
@@ -371,24 +416,11 @@ def print_segment_report(
         segment: Column name used for grouping.
     """
     for segment_value, segment_df in df.groupby(segment):
-        final_cvr = segment_df.loc[
-            segment_df["event_type"] == "purchase",
-            "overall_cvr"
-        ].iloc[0]
-
-        max_drop_point = segment_df["drop_off_rate"].idxmax()
-        max_drop_rate = segment_df.loc[max_drop_point, "drop_off_rate"]
-        max_rate_transition = segment_df.loc[max_drop_point, "transition"]
-
-        max_drop_number_point = segment_df["drop_off_number"].idxmax()
-        max_drop_number = segment_df.loc[max_drop_number_point, "drop_off_number"]
-        max_transition = segment_df.loc[max_drop_number_point, "transition"]
+        metrics = extract_report_metrics(segment_df)
 
         print(f"=== {segment_value} ===")
 
-        print(f"Final Purchase Conversion Rate: {final_cvr:.2%}")
-        print(f"Maximum Drop-off: {max_transition} ({max_drop_number:.0f} users)")
-        print(f"Maximum Drop-off Rate: {max_rate_transition} {max_drop_rate:.2%}")
+        print_report_metrics(metrics)
 
 
 def main() -> None:
