@@ -63,79 +63,79 @@ def fetch_overall_funnel(conn: sqlite3.Connection) -> pd.DataFrame:
         DataFrame containing unique user counts for each funnel stage.
     """
     query = """
-    WITH step1 AS(
+        WITH step1 AS(
+            SELECT
+    	        user_id,
+    		    MIN(event_timestamp) AS view_item_time
+	        FROM events
+	        WHERE event_type = 'view_item'
+    	    GROUP BY user_id
+        ),
+        step2 AS(
+            SELECT
+	            s1.user_id,
+	        	MIN(e.event_timestamp) AS add_to_cart_time
+	        FROM step1 AS s1
+	        INNER JOIN events AS e
+	            ON s1.user_id = e.user_id
+	        	AND e.event_type = 'add_to_cart'
+	       	AND e.event_timestamp > s1.view_item_time
+	        GROUP BY s1.user_id
+        ),
+        step3 AS(
+            SELECT
+	           s2.user_id,
+	           MIN(e.event_timestamp) AS begin_checkout_time
+	        FROM step2 AS s2
+	        INNER JOIN events AS e
+	            ON s2.user_id = e.user_id
+		        AND e.event_type = 'begin_checkout'
+		        AND e.event_timestamp > s2.add_to_cart_time
+	        GROUP BY s2.user_id
+        ),
+        step4 AS (
+            SELECT
+	            s3.user_id,
+		        MIN(e.event_timestamp) AS purchase_time
+	        FROM step3 AS s3
+        	INNER JOIN events AS e
+	            ON s3.user_id = e.user_id
+	    	    AND e.event_type = 'purchase'
+	    	    AND e.event_timestamp > s3.begin_checkout_time
+	        GROUP BY s3.user_id
+        ),
+        funnel_result AS(
+        SELECT 'view_item' AS event_type, COUNT(user_id) AS funnel_count
+        FROM step1
+
+        UNION ALL
+
+        SELECT 'add_to_cart' AS event_type, COUNT(user_id) AS funnel_count
+        FROM step2
+
+        UNION ALL
+
+        SELECT 'begin_checkout' AS event_type, COUNT(user_id) AS funnel_count
+        FROM step3
+
+        UNION ALL
+
+        SELECT 'purchase' AS event_type, COUNT(user_id) AS funnel_count
+        FROM step4
+        )
+
         SELECT
-	        user_id,
-		    MIN(event_timestamp) AS view_item_time
-	    FROM events
-	    WHERE event_type = 'view_item'
-	    GROUP BY user_id
-    ),
-    step2 AS(
-        SELECT
-	        s1.user_id,
-	    	MIN(e.event_timestamp) AS add_to_cart_time
-	    FROM step1 AS s1
-	    INNER JOIN events AS e
-	        ON s1.user_id = e.user_id
-	    	AND e.event_type = 'add_to_cart'
-	    	AND e.event_timestamp > s1.view_item_time
-	    GROUP BY s1.user_id
-    ),
-    step3 AS(
-        SELECT
-	       s2.user_id,
-	       MIN(e.event_timestamp) AS begin_checkout_time
-	    FROM step2 AS s2
-	    INNER JOIN events AS e
-	        ON s2.user_id = e.user_id
-		    AND e.event_type = 'begin_checkout'
-		    AND e.event_timestamp > s2.add_to_cart_time
-	    GROUP BY s2.user_id
-    ),
-    step4 AS (
-        SELECT
-	        s3.user_id,
-		    MIN(e.event_timestamp) AS purchase_time
-	    FROM step3 AS s3
-    	INNER JOIN events AS e
-	        ON s3.user_id = e.user_id
-		    AND e.event_type = 'purchase'
-		    AND e.event_timestamp > s3.begin_checkout_time
-	    GROUP BY s3.user_id
-    ),
-    funnel_result AS(
-    SELECT 'view_item' AS event_type, COUNT(user_id) AS funnel_count
-    FROM step1
-
-    UNION ALL
-
-    SELECT 'add_to_cart' AS event_type, COUNT(user_id) AS funnel_count
-    FROM step2
-
-    UNION ALL
-
-    SELECT 'begin_checkout' AS event_type, COUNT(user_id) AS funnel_count
-    FROM step3
-
-    UNION ALL
-
-    SELECT 'purchase' AS event_type, COUNT(user_id) AS funnel_count
-    FROM step4
-    )
-
-    SELECT
-        event_type,
-	    funnel_count
-    FROM funnel_result
-    ORDER BY
-        CASE event_type
-            WHEN 'view_item' THEN 1
-            WHEN 'add_to_cart' THEN 2
-            WHEN 'begin_checkout' THEN 3
-            WHEN 'purchase' THEN 4
-            ELSE 5
-        END;
+            event_type,
+	        funnel_count
+        FROM funnel_result
+        ORDER BY
+            CASE event_type
+                WHEN 'view_item' THEN 1
+                WHEN 'add_to_cart' THEN 2
+                WHEN 'begin_checkout' THEN 3
+                WHEN 'purchase' THEN 4
+               ELSE 5
+           END;
     """
 
     return pd.read_sql_query(query, conn)
@@ -165,19 +165,99 @@ def fetch_segment_funnel(
         raise ValueError(f"Invalid segment: {segment}")
     
     query = f"""
+        WITH step1 AS(
+            SELECT
+	            user_id,
+	    	    MIN(event_timestamp) AS view_item_time
+	        FROM events
+	        WHERE event_type = 'view_item'
+	        GROUP BY user_id
+        ),
+        step2 AS(
+            SELECT
+	            s1.user_id,
+		        MIN(e.event_timestamp) AS add_to_cart_time
+	        FROM step1 AS s1
+	        INNER JOIN events AS e
+	            ON s1.user_id = e.user_id
+		        AND e.event_type = 'add_to_cart'
+		        AND e.event_timestamp > s1.view_item_time
+        	GROUP BY s1.user_id
+        ),
+        step3 AS(
+            SELECT
+	           s2.user_id,
+	           MIN(e.event_timestamp) AS begin_checkout_time
+	        FROM step2 AS s2
+	        INNER JOIN events AS e
+	            ON s2.user_id = e.user_id
+		        AND e.event_type = 'begin_checkout'
+	        	AND e.event_timestamp > s2.add_to_cart_time
+	        GROUP BY s2.user_id
+        ),
+        step4 AS (
+            SELECT
+	            s3.user_id,
+		        MIN(e.event_timestamp) AS purchase_time
+	        FROM step3 AS s3
+	        INNER JOIN events AS e
+	            ON s3.user_id = e.user_id
+		        AND e.event_type = 'purchase'
+		        AND e.event_timestamp > s3.begin_checkout_time
+	        GROUP BY s3.user_id
+        ),
+        funnel_result AS(
         SELECT
             u.{segment},
-            e.event_type,
-            COUNT(DISTINCT u.user_id) AS funnel_count
-        FROM users AS u
-        INNER JOIN events AS e
-            ON u.user_id = e.user_id
-        GROUP BY
+            'view_item' AS event_type,
+	        COUNT(s1.user_id) AS funnel_count
+        FROM step1 AS s1
+        INNER JOIN users AS u
+            ON s1.user_id = u.user_id
+        GROUP BY u.{segment}
+
+        UNION ALL
+
+        SELECT
             u.{segment},
-            e.event_type
+	        'add_to_cart' AS event_type,
+	        COUNT(s2.user_id) AS funnel_count
+        FROM step2 AS s2
+        INNER JOIN users AS u
+            ON s2.user_id = u.user_id
+        GROUP BY u.{segment}
+
+        UNION ALL
+
+        SELECT
+            u.{segment},
+	        'begin_checkout' AS event_type,
+	        COUNT(s3.user_id) AS funnel_count
+        FROM step3 AS s3
+        INNER JOIN users AS u
+            ON s3.user_id = u.user_id
+        GROUP BY u.{segment}
+
+        UNION ALL
+
+        SELECT
+            u.{segment},
+	        'purchase' AS event_type,
+	        COUNT(s4.user_id) AS funnel_count
+        FROM step4 AS s4
+        INNER JOIN users AS u
+            ON s4.user_id = u.user_id
+        GROUP BY u.{segment}
+        )
+
+        SELECT
+            {segment},
+            event_type,
+	        funnel_count
+        FROM funnel_result
         ORDER BY
-            u.{segment},
-            CASE e.event_type
+            {segment},
+            CASE event_type
                 WHEN 'view_item' THEN 1
                 WHEN 'add_to_cart' THEN 2
                 WHEN 'begin_checkout' THEN 3
