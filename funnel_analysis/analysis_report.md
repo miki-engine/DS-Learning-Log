@@ -1,6 +1,6 @@
 ## Objective
 
-The objective is to identify which user segments have the highest drop-off rates at each stage of the funnel and propose improvements based on the findings.
+The objective is to identify major funnel drop-off points, compare user segments, and propose improvements based on the findings.
 
 ## Data & Methodology
 
@@ -19,7 +19,7 @@ A user is counted as reaching the next stage only if the corresponding event occ
 
 Calculation unit: Unique users are counted at each stage rather than total events.
 
-Analysis metrics: Overall CVR, stage-to-stage CVR, and drop-off rate.
+The analysis calculates overall CVR, stage-to-stage CVR, and drop-off rate.
 
 - Overall CVR: Number of unique users at each stage ÷ Number of unique users at the first stage.
 - Stage-to-stage CVR: Number of unique users at each stage ÷ Number of unique users at the previous stage.
@@ -40,8 +40,8 @@ Analysis metrics: Overall CVR, stage-to-stage CVR, and drop-off rate.
 - Maximum Drop-off: view_item → add_to_cart (673 users)
 - Maximum Drop-off Rate: view_item → add_to_cart 58.57%
 
-The largest drop-off occurs between `view_item` and `add_to_cart`, with 673 users dropping off (58.57%). 
-Also, a substantial drop-off occurs between `begin_checkout` and `purchase`, with 168 users dropping off (55.81%).
+The largest drop-off occurs between `view_item` and `add_to_cart`, with 673 users dropping off (58.57%).
+Additionally, a substantial drop-off occurs between `begin_checkout` and `purchase`, with 168 users dropping off (55.81%).
 
 ## Segment Analysis
 
@@ -57,7 +57,7 @@ Also, a substantial drop-off occurs between `begin_checkout` and `purchase`, wit
 
 The final purchase CVR for Mobile users is 7.76%, substantially lower than the 18.36% for Desktop users.
 
-For Desktop users, the largest drop-off occurs between view_item and add_to_cart, with 252 users dropping off (60.87%). This is the same transition with the largest drop-off in the overall funnel.
+For Desktop users, the largest drop-off occurs between view_item and add_to_cart, with 252 users dropping off (60.87%). This is also the transition with the largest drop-off in the overall funnel.
 
 For Mobile users, the largest drop-off in user count occurs between view_item and add_to_cart (421 users), whereas the highest drop-off rate occurs between begin_checkout and purchase (71.64%).
 
@@ -66,7 +66,7 @@ For Mobile users, the largest drop-off in user count occurs between view_item an
 ![Segment Analysis by Traffic Source](output/traffic_source_funnel.png)
 
 | Metric | Email | Organic | Paid_Social |
-|---|---:|---:|
+|---|---:|---:|---:|
 | Final purchase CVR | 14.79% | 13.89% | 6.93% |
 | Maximum drop-off (users) | 80 | 308 | 285 |
 | Maximum drop-off rate | 52.83% | 54.29% | 70.54% |
@@ -79,5 +79,32 @@ For Paid_Social users, the largest drop-off in both user count and rate occurs b
 
 ## Key Findings
 
+The following findings are particularly noteworthy from the overall and segment analyses:
 
-## Recommendations & Limitations
+- The highest drop-off rate in the overall funnel occurs between `view_item` and `add_to_cart` (58.57%), followed by `begin_checkout` and `purchase` (55.81%).
+
+- Mobile users have a substantially lower final purchase CVR (7.76%) than Desktop users (18.36%). In particular, the highest drop-off rate for Mobile users occurs between `begin_checkout` and `purchase` (71.64%).
+
+- Paid_Social users have the lowest final purchase CVR (6.93%) among the traffic sources. Their highest drop-off rate occurs between `view_item` and `add_to_cart` (70.54%).
+
+## Recommendations
+
+### Mobile Checkout
+
+Possible reasons for the high drop-off rate among Mobile users between `begin_checkout` and `purchase` include poor usability of the checkout form, unexpected shipping fees, limited payment options, concerns about payment security, and slow page loading.
+
+I recommend conducting usability tests of the mobile checkout process, focusing on button accessibility, ease of entering required information, and the visibility of payment-related information. Based on the findings, specific improvements could then be evaluated through A/B testing.
+
+### Paid Social Advertising
+
+For Paid_Social users, a possible reason for the high drop-off rate between `view_item` and `add_to_cart` is a mismatch between the audience reached by advertisements and the products being promoted.
+
+I recommend reviewing the ad targeting criteria and advertising content to assess whether they are relevant to the target audience. Revised targeting strategies or ad content could then be tested to evaluate their impact on the add-to-cart conversion rate.
+
+## Limitations
+
+- The available data do not provide information about the specific reasons why users drop off at each stage of the funnel.
+
+- Although the funnel logic enforces chronological event order, the analysis does not track whether events are associated with the same product or order.
+
+- The effectiveness of the proposed improvements has not yet been evaluated through experiments such as A/B testing.
