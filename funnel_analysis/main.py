@@ -20,6 +20,50 @@ OUTPUT_PATH_OVERALL = OUTPUT_DIR / "overall_funnel.png"
 OUTPUT_PATH_DEVICE = OUTPUT_DIR / "device_funnel.png"
 OUTPUT_PATH_TRAFFIC = OUTPUT_DIR / "traffic_source_funnel.png"
 
+FUNNEL_STEPS_CTE = """
+    WITH step1 AS(
+        SELECT
+            user_id,
+            MIN(event_timestamp) AS view_item_time
+        FROM events
+        WHERE event_type = 'view_item'
+        GROUP BY user_id
+    ),
+    step2 AS(
+        SELECT
+            s1.user_id,
+            MIN(e.event_timestamp) AS add_to_cart_time
+        FROM step1 AS s1
+        INNER JOIN events AS e
+            ON s1.user_id = e.user_id
+            AND e.event_type = 'add_to_cart'
+            AND e.event_timestamp > s1.view_item_time
+        GROUP BY s1.user_id
+    ),
+    step3 AS(
+        SELECT
+            s2.user_id,
+            MIN(e.event_timestamp) AS begin_checkout_time
+        FROM step2 AS s2
+        INNER JOIN events AS e
+            ON s2.user_id = e.user_id
+            AND e.event_type = 'begin_checkout'
+            AND e.event_timestamp > s2.add_to_cart_time
+        GROUP BY s2.user_id
+    ),
+    step4 AS (
+        SELECT
+            s3.user_id,
+            MIN(e.event_timestamp) AS purchase_time
+        FROM step3 AS s3
+        INNER JOIN events AS e
+            ON s3.user_id = e.user_id
+            AND e.event_type = 'purchase'
+            AND e.event_timestamp > s3.begin_checkout_time
+        GROUP BY s3.user_id
+    )
+"""
+
 
 def load_csv(csv_path: Path) -> pd.DataFrame:
     """Load a CSV file into a DataFrame.
@@ -62,48 +106,8 @@ def fetch_overall_funnel(conn: sqlite3.Connection) -> pd.DataFrame:
     Returns:
         DataFrame containing unique user counts for each funnel stage.
     """
-    query = """
-        WITH step1 AS(
-            SELECT
-    	        user_id,
-    		    MIN(event_timestamp) AS view_item_time
-	        FROM events
-	        WHERE event_type = 'view_item'
-    	    GROUP BY user_id
-        ),
-        step2 AS(
-            SELECT
-	            s1.user_id,
-	        	MIN(e.event_timestamp) AS add_to_cart_time
-	        FROM step1 AS s1
-	        INNER JOIN events AS e
-	            ON s1.user_id = e.user_id
-	        	AND e.event_type = 'add_to_cart'
-	       	AND e.event_timestamp > s1.view_item_time
-	        GROUP BY s1.user_id
-        ),
-        step3 AS(
-            SELECT
-	           s2.user_id,
-	           MIN(e.event_timestamp) AS begin_checkout_time
-	        FROM step2 AS s2
-	        INNER JOIN events AS e
-	            ON s2.user_id = e.user_id
-		        AND e.event_type = 'begin_checkout'
-		        AND e.event_timestamp > s2.add_to_cart_time
-	        GROUP BY s2.user_id
-        ),
-        step4 AS (
-            SELECT
-	            s3.user_id,
-		        MIN(e.event_timestamp) AS purchase_time
-	        FROM step3 AS s3
-        	INNER JOIN events AS e
-	            ON s3.user_id = e.user_id
-	    	    AND e.event_type = 'purchase'
-	    	    AND e.event_timestamp > s3.begin_checkout_time
-	        GROUP BY s3.user_id
-        ),
+    query = f"""
+        {FUNNEL_STEPS_CTE},
         funnel_result AS(
         SELECT 'view_item' AS event_type, COUNT(user_id) AS funnel_count
         FROM step1
@@ -126,7 +130,7 @@ def fetch_overall_funnel(conn: sqlite3.Connection) -> pd.DataFrame:
 
         SELECT
             event_type,
-	        funnel_count
+            funnel_count
         FROM funnel_result
         ORDER BY
             CASE event_type
@@ -165,52 +169,12 @@ def fetch_segment_funnel(
         raise ValueError(f"Invalid segment: {segment}")
     
     query = f"""
-        WITH step1 AS(
-            SELECT
-	            user_id,
-	    	    MIN(event_timestamp) AS view_item_time
-	        FROM events
-	        WHERE event_type = 'view_item'
-	        GROUP BY user_id
-        ),
-        step2 AS(
-            SELECT
-	            s1.user_id,
-		        MIN(e.event_timestamp) AS add_to_cart_time
-	        FROM step1 AS s1
-	        INNER JOIN events AS e
-	            ON s1.user_id = e.user_id
-		        AND e.event_type = 'add_to_cart'
-		        AND e.event_timestamp > s1.view_item_time
-        	GROUP BY s1.user_id
-        ),
-        step3 AS(
-            SELECT
-	           s2.user_id,
-	           MIN(e.event_timestamp) AS begin_checkout_time
-	        FROM step2 AS s2
-	        INNER JOIN events AS e
-	            ON s2.user_id = e.user_id
-		        AND e.event_type = 'begin_checkout'
-	        	AND e.event_timestamp > s2.add_to_cart_time
-	        GROUP BY s2.user_id
-        ),
-        step4 AS (
-            SELECT
-	            s3.user_id,
-		        MIN(e.event_timestamp) AS purchase_time
-	        FROM step3 AS s3
-	        INNER JOIN events AS e
-	            ON s3.user_id = e.user_id
-		        AND e.event_type = 'purchase'
-		        AND e.event_timestamp > s3.begin_checkout_time
-	        GROUP BY s3.user_id
-        ),
+        {FUNNEL_STEPS_CTE},
         funnel_result AS(
         SELECT
             u.{segment},
             'view_item' AS event_type,
-	        COUNT(s1.user_id) AS funnel_count
+            COUNT(s1.user_id) AS funnel_count
         FROM step1 AS s1
         INNER JOIN users AS u
             ON s1.user_id = u.user_id
@@ -220,8 +184,8 @@ def fetch_segment_funnel(
 
         SELECT
             u.{segment},
-	        'add_to_cart' AS event_type,
-	        COUNT(s2.user_id) AS funnel_count
+            'add_to_cart' AS event_type,
+            COUNT(s2.user_id) AS funnel_count
         FROM step2 AS s2
         INNER JOIN users AS u
             ON s2.user_id = u.user_id
@@ -231,8 +195,8 @@ def fetch_segment_funnel(
 
         SELECT
             u.{segment},
-	        'begin_checkout' AS event_type,
-	        COUNT(s3.user_id) AS funnel_count
+            'begin_checkout' AS event_type,
+            COUNT(s3.user_id) AS funnel_count
         FROM step3 AS s3
         INNER JOIN users AS u
             ON s3.user_id = u.user_id
@@ -242,8 +206,8 @@ def fetch_segment_funnel(
 
         SELECT
             u.{segment},
-	        'purchase' AS event_type,
-	        COUNT(s4.user_id) AS funnel_count
+            'purchase' AS event_type,
+            COUNT(s4.user_id) AS funnel_count
         FROM step4 AS s4
         INNER JOIN users AS u
             ON s4.user_id = u.user_id
@@ -253,7 +217,7 @@ def fetch_segment_funnel(
         SELECT
             {segment},
             event_type,
-	        funnel_count
+            funnel_count
         FROM funnel_result
         ORDER BY
             {segment},
@@ -461,7 +425,13 @@ def visualize_segment(
     return fig
 
 
-def save_png(fig: plt.Figure, output_path: Path) -> None:
+def save_png(
+    fig: plt.Figure,
+    output_path: Path,
+    *,
+    dpi: int = 300,
+    bbox_inches: str | None = "tight",
+) -> None:
     """Save the figure as a PNG image.
 
     Create the destination directory if it does not exist.
@@ -469,9 +439,17 @@ def save_png(fig: plt.Figure, output_path: Path) -> None:
     Args:
         fig: Figure containing the funnel charts.
         output_path: Path where the PNG file will be saved.
+        dpi: Image resolution in dots per inch (default: 300)
+        bbox_inches: Area of the figure to save. "tight" reduces
+            extra whitespace (default: "tight").
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path)
+
+    fig.savefig(
+        output_path,
+        dpi=dpi,
+        bbox_inches=bbox_inches,
+    )
 
 
 def extract_report_metrics(
@@ -603,7 +581,7 @@ def main() -> None:
     save_png(fig_device, OUTPUT_PATH_DEVICE)
     save_png(fig_traffic, OUTPUT_PATH_TRAFFIC)
 
-    plt.show()
+    # plt.show()
     plt.close(fig_overall)
     plt.close(fig_device)
     plt.close(fig_traffic)
