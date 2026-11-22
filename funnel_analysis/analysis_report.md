@@ -19,6 +19,10 @@ A user is counted as reaching the next stage only if the corresponding event occ
 
 Calculation unit: Unique users are counted at each stage rather than total events.
 
+Of the 1,200 registered users, 1,149 reached the first funnel stage (`view_item`). The remaining 51 users did not reach this stage and are therefore excluded from the funnel calculations. The denominator for overall CVR is 1,149 rather than the total number of registered users.
+
+For segment-level overall CVR, the denominator is the number of users within each segment who reached `view_item`.
+
 The analysis calculates overall CVR, stage-to-stage CVR, and drop-off rate.
 
 - Overall CVR: Number of unique users at each stage ÷ Number of unique users at the first stage.
@@ -31,14 +35,14 @@ The analysis calculates overall CVR, stage-to-stage CVR, and drop-off rate.
 
 | Stage | Unique Users | Overall CVR | Drop-off Rate |
 |---|---:|---:|---:|
-| view_item | 1,149 | 100.00% | — |
-| add_to_cart | 476 | 41.43% | 58.57% |
-| begin_checkout | 301 | 26.20% | 36.76% |
-| purchase | 133 | 11.58% | 55.81% |
+| `view_item` | 1,149 | 100.00% | — |
+| `add_to_cart` | 476 | 41.43% | 58.57% |
+| `begin_checkout` | 301 | 26.20% | 36.76% |
+| `purchase` | 133 | 11.58% | 55.81% |
 
 - Final Purchase Conversion Rate: 11.58%
-- Maximum Drop-off: view_item → add_to_cart (673 users)
-- Maximum Drop-off Rate: view_item → add_to_cart 58.57%
+- Maximum Drop-off: `view_item` → `add_to_cart` (673 users)
+- Maximum Drop-off Rate: `view_item` → `add_to_cart` 58.57%
 
 The largest drop-off occurs between `view_item` and `add_to_cart`, with 673 users dropping off (58.57%).
 Additionally, a substantial drop-off occurs between `begin_checkout` and `purchase`, with 168 users dropping off (55.81%).
@@ -55,11 +59,15 @@ Additionally, a substantial drop-off occurs between `begin_checkout` and `purcha
 | Maximum drop-off (users) | 252 | 421 |
 | Maximum drop-off rate | 60.87% | 71.64% |
 
+Desktop users have slightly higher drop-off rates than Mobile users between `view_item` and `add_to_cart`, and between `add_to_cart` and `begin_checkout`. However, Mobile users have a drop-off rate of 71.64% between `begin_checkout` and `purchase`, which is substantially higher than the 24.00% for Desktop users.
+
 The final purchase CVR for Mobile users is 7.76%, substantially lower than the 18.36% for Desktop users.
 
-For Desktop users, the largest drop-off occurs between view_item and add_to_cart, with 252 users dropping off (60.87%). This is also the transition with the largest drop-off in the overall funnel.
+For Desktop users, the largest drop-off occurs between `view_item` and `add_to_cart`, with 252 users dropping off (60.87%). This is also the transition with the largest drop-off in the overall funnel.
 
-For Mobile users, the largest drop-off in user count occurs between view_item and add_to_cart (421 users), whereas the highest drop-off rate occurs between begin_checkout and purchase (71.64%).
+For Mobile users, the largest drop-off in user count occurs in the `view_item` → `add_to_cart` transition (421 users), whereas the highest drop-off rate occurs in the `begin_checkout` → `purchase` transition (71.64%).
+
+This suggests that the checkout stage is a particularly important area for further investigation among Mobile users.
 
 ### By Traffic Source
 
@@ -71,11 +79,17 @@ For Mobile users, the largest drop-off in user count occurs between view_item an
 | Maximum drop-off (users) | 80 | 308 | 285 |
 | Maximum drop-off rate | 52.83% | 54.29% | 70.54% |
 
+Paid_Social users have the highest drop-off rates among the three traffic sources in both the `view_item` → `add_to_cart` and `begin_checkout` → `purchase` transitions.
+
+The difference is particularly pronounced in the first transition, where Paid_Social has a drop-off rate of 70.54%, compared with 47.34% for Email and 53.47% for Organic.
+
+In contrast, Email users have the highest drop-off rate in the `add_to_cart` → `begin_checkout` transition (40.45%).
+
 The final purchase CVR for Paid_Social users is 6.93%, lower than the 14.79% for Email users and 13.89% for Organic users.
 
-For Email and Organic users, the largest drop-offs in user count occur between view_item and add_to_cart (80 users for Email and 308 users for Organic). However, their highest drop-off rates occur between begin_checkout and purchase (52.83% for Email and 54.29% for Organic).
+For Email and Organic users, the largest drop-offs in user count occur between `view_item` and `add_to_cart` (80 users for Email and 308 users for Organic). However, their highest drop-off rates occur between `begin_checkout` and `purchase` (52.83% for Email and 54.29% for Organic).
 
-For Paid_Social users, the largest drop-off in both user count and rate occurs between view_item and add_to_cart, with 285 users dropping off (70.54%). This is the same transition that has the highest drop-off rate in the overall funnel.
+For Paid_Social users, the largest drop-off in both user count and rate occurs between `view_item` and `add_to_cart`, with 285 users dropping off (70.54%). This is the same transition that has the highest drop-off rate in the overall funnel.
 
 ## Key Findings
 
