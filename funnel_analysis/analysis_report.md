@@ -29,6 +29,10 @@ The analysis calculates overall CVR, stage-to-stage CVR, and drop-off rate.
 - Stage-to-stage CVR: Number of unique users at each stage ÷ Number of unique users at the previous stage.
 - Drop-off rate: 1 − Stage-to-stage CVR
 
+The unique-user counts at all four funnel stages were identical between the original aggregation (without chronological constraints) and the revised aggregation (with chronological constraints).
+
+The analysis compares `event_timestamp` values as strings and assumes a consistent datetime format in which string order matches chronological order. Events with the same timestamp as the previous stage are not considered to occur after it.
+
 ## Overall Funnel Analysis
 
 ![Overall Funnel Analysis](output/overall_funnel.png)
