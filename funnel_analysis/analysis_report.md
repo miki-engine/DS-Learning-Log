@@ -113,6 +113,12 @@ Possible reasons for the high drop-off rate among Mobile users between `begin_ch
 
 I recommend conducting usability tests of the mobile checkout process, focusing on button accessibility, ease of entering required information, and the visibility of payment-related information. Based on the findings, specific improvements could then be evaluated through A/B testing.
 
+If the `begin_checkout` → `purchase` CVR for Mobile users increased to match the Desktop rate of 76.00%, the estimated number of Mobile purchasers would increase from 57 to approximately 153, representing about 96 additional purchasers.
+
+This estimate assumes that the number of Mobile users reaching `begin_checkout` remains unchanged at 201 and that only the checkout-to-purchase conversion rate improves.
+
+This is a hypothetical scenario rather than a prediction. Whether such an improvement is achievable, and which measures could produce it remain uncertain.
+
 ### Paid Social Advertising
 
 For Paid_Social users, a possible reason for the high drop-off rate between `view_item` and `add_to_cart` is a mismatch between the audience reached by advertisements and the products being promoted.
