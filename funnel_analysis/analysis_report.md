@@ -132,3 +132,9 @@ I recommend reviewing the ad targeting criteria and advertising content to asses
 - Although the funnel logic enforces chronological event order, the analysis does not track whether events are associated with the same product or order.
 
 - The effectiveness of the proposed improvements has not yet been evaluated through experiments such as A/B testing.
+
+- The observed differences in conversion and drop-off rates across segments have not been tested for statistical significance. Some of these differences may be due to random variation.
+
+- Device type and traffic source were analyzed separately. Potential confounding between these variables has not been examined, and the independent effects of device type and traffic source cannot be determined from the current analysis.
+
+- The analysis is based on observational data and identifies associations rather than causal relationships. Further investigation and controlled experiments are needed to determine whether the proposed improvements can reduce drop-off rates.
