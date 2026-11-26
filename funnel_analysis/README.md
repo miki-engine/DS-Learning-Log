@@ -12,6 +12,8 @@ The Python script imports CSV data into a SQLite database and uses SQL to count 
 
 The results are visualized using Matplotlib and Seaborn, saved as PNG images, and summarized in the console for both the overall funnel and individual segments.
 
+For detailed methodology, findings, and limitations, see the [Analysis Report](analysis_report.md).
+
 ## What I Practiced
 
 ### Data Processing and SQL
@@ -71,7 +73,22 @@ Through this refactoring, I learned how separating shared logic from query-speci
 
 ## Future Improvements
 
-- Introduce automated tests with `pytest` to validate funnel calculations and chronological event conditions
+### Code Quality
+
+- Centralize the names and order of the funnel stages
+- Make funnel calculations less dependent on implicit row ordering
+- Reduce duplicated logic in `main()`
+
+### Data Validation and Testing
+
+- Retain funnel stages with zero users in segment-level aggregation
 - Strengthen input validation to handle missing values, invalid timestamps, and incomplete datasets
+- Introduce automated tests with `pytest` to validate funnel calculations and chronological event conditions
+
+### Further Analysis
+
+- Test the statistical significance of differences in conversion rates and drop-off rates across segments
+- Analyze funnel metrics across combinations of device and traffic_source to investigate potential confounding
 - Add confidence intervals to express uncertainty in estimated conversion rates
+- Estimate how much the number of Paid_Social purchasers could increase under hypothetical improvement scenarios
 - For future A/B experiments, use power analysis to estimate the sample size required to detect meaningful improvements
