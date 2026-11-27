@@ -1,3 +1,13 @@
+# E-commerce Funnel Analysis Report
+
+## Executive Summary
+
+The overall purchase conversion rate is 11.58%, with the largest drop-off occurring in the `view_item` → `add_to_cart` transition (58.57%).
+
+Mobile users exhibit a particularly high drop-off rate during the checkout-to-purchase transition (71.64%), while Paid_Social users experience a substantial drop-off in the first funnel transition (70.54%).
+
+Based on these findings, I recommend conducting usability tests of the mobile checkout process and reviewing Paid_Social ad targeting and content. The effectiveness of any resulting improvements should be evaluated through A/B testing.
+
 ## Objective
 
 The objective is to identify major funnel drop-off points, compare user segments, and propose improvements based on the findings.
@@ -117,7 +127,7 @@ If the `begin_checkout` → `purchase` CVR for Mobile users increased to match t
 
 This estimate assumes that the number of Mobile users reaching `begin_checkout` remains unchanged at 201 and that only the checkout-to-purchase conversion rate improves.
 
-This is a hypothetical scenario rather than a prediction. Whether such an improvement is achievable, and which measures could produce it remain uncertain.
+This is a hypothetical scenario rather than a prediction. Whether such an improvement is achievable and which measures could produce it remain uncertain.
 
 ### Paid Social Advertising
 
